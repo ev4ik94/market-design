@@ -1,0 +1,41 @@
+{
+  "name": "market-design",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@fancyapps/fancybox": "^3.5.7",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^8.2.0",
+    "gifsicle": "^5.1.0",
+    "jquery": "^3.5.1",
+    "jsonwebtoken": "^8.5.1",
+    "masonry-layout": "^4.2.2",
+    "multer": "^1.4.2",
+    "next": "9.4.4",
+    "next-connect": "^0.8.1",
+    "nodemailer": "^6.4.11",
+    "pg": "^8.3.0",
+    "pg-hstore": "^2.3.3",
+    "pngquant-bin": "^6.0.0",
+    "prop-types": "^15.7.2",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-lazy-load-image-component": "^1.5.0",
+    "react-masonry-component": "^6.2.1",
+    "react-masonry-css": "^1.0.14",
+    "react-redux": "^7.2.1",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
+    "sequelize": "^6.3.4",
+    "sequelize-next": "0.0.0-development",
+    "validator": "^13.1.1"
+  },
+  "devDependencies": {
+    "compress-images": "^1.9.2"
+  }
+}

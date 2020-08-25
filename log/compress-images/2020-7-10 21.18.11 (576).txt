@@ -1,0 +1,7 @@
+File from: [images/products/productImage.1597076291515.jpg]
+
+File to: [./public/images/products/min-productImage.1597076291515.jpg]
+
+Compression algorithm: [-]
+
+Description: File does not exist!

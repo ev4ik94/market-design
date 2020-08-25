@@ -1,0 +1,7 @@
+File from: [./static/products/images/back-form.jpg]
+
+File to: [./static/products/compressorback-form.jpg]
+
+Compression algorithm: [-]
+
+Description: File does not exist!
