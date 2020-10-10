@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import {useState, useEffect, useContext, useCallback, useRef} from 'react';
+import React, {useState, useEffect, useContext, useCallback, useRef} from 'react';
 import {AuthContext} from "../context/auth.context";
 import {useAuth} from "../hooks/auth.hook";
 import useHttp from "../hooks/http.hook";
@@ -7,6 +7,7 @@ import Link from 'next/link';
 import {createCookie, getCookie, encrypt, decrypt, eraseCookie} from "./secondary-functions";
 import {useCart} from "../hooks/cart.hook";
 import {useRouter} from "next/router";
+import Preloader from "./Preloader";
 
 
 export default function MainLayout({children, title}) {
@@ -16,25 +17,29 @@ export default function MainLayout({children, title}) {
     const [categoryList, setCategories] = useState([]);
     const [form, setForm] = useState('signIn');
     const isAuthentication = !!token;
-    const {addToCartCookie, getCart, cart} = useCart();
+    const {getCart, cart} = useCart();
+
+    const [mountCat, setMountCat] = useState(true);
 
     useEffect(()=>{
-        if(!categoryList.length){
+        if(mountCat){
             const catCookie = getCookie('categories');
             if(!catCookie){
-                getCategories()
+                getCategories();
             }else{
-
-                setCategories(decrypt(catCookie))
+                setCategories(decrypt(catCookie));
             }
+            getCart();
+
+            setMountCat(false)
 
         }
 
-    },[categoryList])
 
-    useEffect(()=>{
-        getCart()
-    },[getCart]);
+    },[mountCat])
+
+
+
 
 
 
@@ -58,7 +63,7 @@ export default function MainLayout({children, title}) {
                     createCookie('categories', encrypt(result.data))
                     setCategories(result.data);
                     setLoading(false);
-                })
+                }).catch(err=>console.log(err.message))
 
 
         }catch(e){
@@ -68,9 +73,14 @@ export default function MainLayout({children, title}) {
     }
 
     if(!ready){
-        return <p>Loading ...</p>
+        return (
+            <div className="d-flex justify-content-center pt-5" style={{minHeight:'400px'}}>
+                <div className="spinner-border" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+            </div>
+        )
     }
-
 
 
     return (
@@ -79,12 +89,13 @@ export default function MainLayout({children, title}) {
 
             <Head>
                 <title>Admin DashBoard</title>
+                <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
             <AuthContext.Provider value={{
-                token, userId, login, logout, isAuthentication, email
+                token, userId, login, logout, isAuthentication, email,cart
             }}>
-            <NavBar categories={categoryList} cartObj={cart} />
-            <div style={{paddingTop:'80px'}}>
+            <NavBar categories={categoryList} cartObj={cart && cart!==null?cart:[]} />
+            <div style={{paddingTop:'9vh'}}>
                 {children}
                 <FormAuth formToggle={form} toggleFn={setForm}/>
             </div>
@@ -453,10 +464,9 @@ function FormAuth({formToggle, toggleFn}){
 function NavBar({categories, cartObj}){
 
     const [categoriesList, setCategories] = useState([]);
-    const [cart, setCart] = useState(null);
     const [userName, setUserName] = useState('');
     const [popover, setPop] = useState(false);
-    const {token,userId,email} = useContext(AuthContext);
+    const {token,email} = useContext(AuthContext);
     const router = useRouter();
 
     useEffect(()=>{
@@ -466,17 +476,8 @@ function NavBar({categories, cartObj}){
     }, [categories]);
 
     useEffect(()=>{
-        if(userName===''){
-
-            setUserName(email);
-        }
+        if(userName==='')setUserName(email);
     }, [userName]);
-
-    useEffect(()=>{
-        if(cart===null){
-            setCart(cartObj);
-        }
-    }, [cartObj]);
 
 
 
@@ -508,22 +509,22 @@ function NavBar({categories, cartObj}){
 
 
     return(
-        <nav className="navbar navbar-expand-lg navbar-light bg-light justify-content-lg-around justify-content-between">
+        <nav className="navbar navbar-expand-lg navbar-light bg-white justify-content-lg-around justify-content-between">
             <div className="navbar-brand">
                 <Link href='/'>
                     <a className={router.pathname=='/'?'nav-item active':'nav-item'}>
-                        <img src="/vercel.svg" alt="" className="img-contain"/>
+                        <img src="/icons/peelpic.svg" alt="" className="img-contain"/>
                     </a>
                 </Link>
             </div>
 
             <div className="login-cart d-lg-none d-flex position-absolute" style={{right:'90px', top: '7px'}}>
-                <Link href="/cart">
+                <Link href="/checkout">
                     <a style={{padding:'10px 15px'}} className="position-relative">
                         <div className="icon-cart icon-blck icon-cont-wrap">
                             <img src="/icons/shopping-cart.svg" alt=""/>
                         </div>
-                        <div className="count-prds-cart position-absolute">{cart!==null?cart.length:0}</div>
+                        <div className="count-prds-cart position-absolute">{cartObj.length}</div>
                     </a>
                 </Link>
 
@@ -540,17 +541,17 @@ function NavBar({categories, cartObj}){
                             <p className="mb-0 font-weight-bold text-uppercase text-right">{token && userName?elipsisLogin(userName):''}</p>
                             <ul className="pl-0 mb-0">
                                 <li className="text-right">
-                                    <Link href='/'>
+                                    <Link href='/user'>
                                         <a title="Account details">Account details</a>
                                     </Link>
                                 </li>
                                 <li className="text-right">
-                                    <Link href='/'>
+                                    <Link href='/user/billing'>
                                         <a title="Billing details">Billing details</a>
                                     </Link>
                                 </li>
                                 <li className="text-right">
-                                    <Link href='/'>
+                                    <Link href='/user/history'>
                                         <a title="Purchase history">Purchase history</a>
                                     </Link>
                                 </li>
@@ -591,12 +592,12 @@ function NavBar({categories, cartObj}){
             </div>
 
             <div className="login-cart d-lg-flex d-none justify-content-between">
-                <Link href="/cart">
+                <Link href="/checkout">
                     <a style={{padding:'10px 15px'}} className="position-relative">
                         <div className="icon-cart icon-blck icon-cont-wrap">
                             <img src="/icons/shopping-cart.svg" alt=""/>
                         </div>
-                        <div className="count-prds-cart position-absolute">{cart!==null?cart.length:0}</div>
+                        <div className="count-prds-cart position-absolute">{cartObj.length}</div>
                     </a>
                 </Link>
 
@@ -618,17 +619,17 @@ function NavBar({categories, cartObj}){
                             <p className="mb-0 font-weight-bold text-uppercase text-right">{token && userName?elipsisLogin(userName):''}</p>
                             <ul className="pl-0 mb-0">
                                 <li className="text-right">
-                                    <Link href='/'>
+                                    <Link href='/user'>
                                         <a title="Account details">Account details</a>
                                     </Link>
                                 </li>
                                 <li className="text-right">
-                                    <Link href='/'>
+                                    <Link href='/user/billing'>
                                         <a title="Billing details">Billing details</a>
                                     </Link>
                                 </li>
                                 <li className="text-right">
-                                    <Link href='/'>
+                                    <Link href='/user/history'>
                                         <a title="Purchase history">Purchase history</a>
                                     </Link>
                                 </li>
@@ -697,6 +698,7 @@ function NavBar({categories, cartObj}){
                         
                         .navbar-brand{
                             width:130px;
+                            height: 50px;
                         }
                         
                         .count-prds-cart{
@@ -780,6 +782,12 @@ function NavBar({categories, cartObj}){
                             }
                         }
                         
+                        @media screen and (max-width: 350px){
+                            .navbar-brand{
+                               width:110px;
+                            }
+                        }
+                        
                         
                         
                         
@@ -792,11 +800,11 @@ function NavBar({categories, cartObj}){
 
 function Footer() {
     return(
-        <div className="container-fluid" style={{marginTop:'100px'}}>
+        <div className="container-fluid">
            <div className="footer-nav-links d-flex flex-lg-row flex-md-row flex-column">
                <div className="brand-icon col-12 col-lg-3 col-md-3 mb-5">
                     <div className="cont-img" style={{width:'150px'}}>
-                        <img src="/vercel.svg" alt=""/>
+                        <img src="/icons/peelpic.svg" alt=""/>
                     </div>
                </div>
                <div className="links-foot col-12 col-lg-9 col-md-9 d-flex">
@@ -877,20 +885,21 @@ function Footer() {
 
             <style jsx>{
                 `
-                    .nav-link{
-                    
-                        font-size:.9rem;
-                    }
-                    .site-links .nav-link{
-                        color:#000;
-                    }
-                    .social-links .nav-link{
-                        color:#8e8e8e;
+                
+                    .container-fluid{
+                        padding-top: 20px;
+                        border-top: 1px solid #f2ede8;
+                        margin-top: 100px;
                     }
                     
-                    .nav-link:hover{
-                        font-weight:bold;
-                    }
+                    
+                    .nav-link{font-size:.9rem;}
+                    
+                    .site-links .nav-link{color:#000;}
+                    
+                    .social-links .nav-link{color:#8e8e8e;}
+                    
+                    .nav-link:hover{font-weight:bold;}
                     
                     .nav-link:before{
                         content:arr(title);
@@ -906,13 +915,11 @@ function Footer() {
                     }
                     
                     @media screen and (max-width: 767px) {
-                        .site-links,.site-links .nav-link {
-                            padding-left:0;
-                        }
+                        .site-links,.site-links .nav-link {padding-left:0;}
                         
-                        .nav-link,p{
-                            font-size:.8rem;
-                        }
+                        .nav-link,p{font-size:.8rem;}
+                        
+                        
                     }
                     
                     @media screen and (max-width: 400px) {
@@ -920,6 +927,8 @@ function Footer() {
                         .nav-link,p{
                             font-size:.65rem;
                         }
+                        
+                         
                     }
                 
                 `

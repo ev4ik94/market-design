@@ -6,11 +6,13 @@ import Link from "next/link";
 import ProdPortfolio from "../components/ProdPortfolio";
 import {useRouter} from "next/router";
 import {decrypt, getCookie, paginationCalc} from "../components/secondary-functions";
+import Preloader from "../components/Preloader";
+import Error from "../components/Error";
 
-export default function Portfolio({products:serverProd}) {
+export default function Portfolio({products:serverProd, serverError}) {
 
     const [productsPortfolio, setProducts] = useState([]);
-    const {request} = useHttp();
+    const {request, error, loading} = useHttp();
     const [categories, setCategories] = useState([]);
     const router = useRouter();
 
@@ -27,14 +29,16 @@ export default function Portfolio({products:serverProd}) {
         if(!serverProd) getProducts();
         else{
 
-            setProducts(serverProd.data&&serverProd.data.rows?serverProd.data.rows:[]);
-            const a = (serverProd.data&&serverProd.data.count?serverProd.data.count:0)/30;
-            let arrPag = [];
-            for(let i=0; i<=a; i++){
-                arrPag.push(i+1)
-            }
-            setPagination(arrPag);
-            fun(arrPag)
+           if(serverError===null){
+               setProducts(serverProd.data&&serverProd.data.rows?serverProd.data.rows:[]);
+               const a = (serverProd.data&&serverProd.data.count?serverProd.data.count:0)/30;
+               let arrPag = [];
+               for(let i=0; i<=a; i++){
+                   arrPag.push(i+1)
+               }
+               setPagination(arrPag);
+               fun(arrPag)
+           }
 
 
         }
@@ -47,6 +51,16 @@ export default function Portfolio({products:serverProd}) {
             setCategories(categories.length&&categories[0].children?categories[0].children:[]);
         }
     }, [categories]);
+
+    useEffect(()=>{
+
+        if(serverError!==null){
+            if(serverError===404){
+                return window.location.href = `${process.env.API_URL}/404`
+            }
+        }
+
+    }, [serverError])
 
 
 
@@ -63,8 +77,6 @@ export default function Portfolio({products:serverProd}) {
                 }
                 setProducts(arr);
                 fun(pagination)
-            }).catch(err => {
-                console.log(err.message)
             })
 
 
@@ -75,6 +87,16 @@ export default function Portfolio({products:serverProd}) {
     const loadMoreProducts = async(e)=>{
         e.preventDefault();
         getProducts();
+    }
+
+    if(loading){
+        return(<Preloader />)
+    }
+
+
+
+    if(error!==null || serverError!==null){
+        return(<Error />)
     }
 
 
@@ -287,10 +309,19 @@ export async function getServerSideProps(ctx){
 
     const {page, catid} = ctx.query;
     const response = await fetch(`${process.env.API_URL}/api/products?page=${page?page:1}&limit=30&${catid?'catid='+catid:'parentid=3'}&recent=1`)
-    const post = await response.json()
+        .catch(e=>e.message);
 
+    if(!response.ok){
 
-    return {
-        props:{products:post}
+        return{
+            props:{products:null, serverError:response.status}
+        }
+    }else{
+        const post = await response.json();
+
+        return {
+            props:{products:post, serverError:null}
+        }
     }
+
 }

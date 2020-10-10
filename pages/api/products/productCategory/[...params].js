@@ -1,4 +1,4 @@
-const Review = require('../../../../controllers/review.controller');
+const Product = require('../../../../controllers/product.controller');
 
 export default async (req, res)=>{
 
@@ -6,9 +6,9 @@ export default async (req, res)=>{
 
     switch(method){
 
-        case 'POST':
+        case 'GET':
 
-            await Review.createReview(req, res)
+            await Product.getProductCategory(req,res)
             break
 
 

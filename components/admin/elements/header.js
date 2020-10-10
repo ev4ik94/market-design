@@ -19,11 +19,11 @@ export default function Header() {
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
+            <nav className="navbar navbar-expand-lg">
 
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav ml-auto">
-                        <button type="button" className="btn btn-danger" onClick={signOut}>Log Out</button>
+                        <button type="button" className="btn btn-outline-danger" onClick={signOut}>Log Out</button>
                     </ul>
                 </div>
             </nav>
@@ -31,7 +31,8 @@ export default function Header() {
             <style jsx>{`
                 .navbar{
                     border-bottom: 1px solid #b9b9b9;
-                    padding:5px;
+                    padding:10px 5px;
+                    background-color:#fff;
                 
                 }
                

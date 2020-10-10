@@ -29,7 +29,7 @@ const OUTPUT_path = "./public/images/shop-products/min-";
 
 
 exports.uploadFile = async(req, res)=>{
-
+    console.log("Enter")
     try{
 
          upload(req, res, (err)=>{
@@ -39,6 +39,8 @@ exports.uploadFile = async(req, res)=>{
             if(req.file===undefined){
                 res.status(400).json({success:false, message: 'File dont uploaded'})
             }
+
+
 
             compressorImage(`public/images/products/${req.file.filename}`, OUTPUT_path,
                 { compress_force: false,

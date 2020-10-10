@@ -4,8 +4,7 @@ import NavSide from './elements/sideNav';
 import {AuthContext} from "../../context/auth.context";
 import {useAuth} from "../../hooks/auth.hook";
 import Header from "../../components/admin/elements/header";
-import {createStore} from "redux";
-import {dcT} from '../secondary-functions';
+
 
 
 export default function AdminLayout({children}) {
@@ -31,15 +30,17 @@ export default function AdminLayout({children}) {
 
 
                 <AuthContext.Provider value={{
-                    token:token, userId, login, logout, isAuthentication
+                    token, userId, login, logout, isAuthentication
                 }}>
                     {
                         isAuthentication?(
-                            <div className="main-board d-flex justify-content-end">
+                            <div className="main-board">
                                 <NavSide />
-                                <main className="col-9">
-                            <Header />
-                                    {children}
+                                <main>
+                                    <Header />
+                                    <div className="wrap-content col-9 float-right">
+                                        {children}
+                                    </div>
                         </main></div>):(<Authenticate />)
                     }
                 </AuthContext.Provider>
@@ -48,13 +49,6 @@ export default function AdminLayout({children}) {
     )
 }
 
-
-
-function Main({children}){
-    return(
-        {children}
-    )
-}
 
 function Authenticate(){
 
@@ -125,7 +119,7 @@ function Authenticate(){
             <style jsx>{`
                 .wrap-main-form-admin{
                         height:99vh;
-                        background: url('../static/images/back-form.jpg');
+                        background: url('/images/back-form.jpg');
                     }
                  
                  .wrap-form{

@@ -9,6 +9,7 @@ const checkAuth = require ('./../middleware/checkAuth');
 const Sequelize = require('sequelize-next');
 const Op = Sequelize.Op;
 
+
 exports.createProduct = async (req, res) => {
     try{
 
@@ -131,12 +132,42 @@ exports.getProduct = async (req, res) => {
     }
 }
 
+exports.getProductCategory = async (req, res) => {
+    try{
+
+        const id = req.query.params.length?req.query.params[0]:null;
+        const catid = req.query.params.length?req.query.params[1]:null;
+
+        if(id!==null && catid!==null){
+            await Product.findAll({
+                where:{category_id:catid, id:{[Op.ne]: id}},
+                attributes: ["id", "category_id", "createdAt", "description", "publish", "title"],
+                include:["Images", "costs", "tags", "review", "categories"],
+                limit:3
+            }).
+            then((result)=>{
+
+                res.status(200).json({success:true, data:result });
+
+            }).catch(err=>{
+                res.status(400).json({success:false, message:err.message});
+            })
+        }
+
+
+
+    }catch (e) {
+        res.status(500).json({success:false, message:e.message});
+    }
+}
+
 
 exports.getActiveAll = async (req, res) => {
     try{
 
-        const {page, limit, parentid, catid, recent, popular} =req.query;
+        const {page, limit, parentid, catid, recent, popular, tag} =req.query;
         let categories = [];
+
 
 
 
@@ -158,7 +189,15 @@ exports.getActiveAll = async (req, res) => {
                         order: [['createdAt', 'DESC']]
                     },
                     "costs",
-                    "tags"],
+                    tag?{
+                        model:Tag,
+                        as: "tags",
+                        where: {
+                            title: tag
+                        }
+
+                    }:"tags"
+                    ],
                 distinct:true,
                 attributes: [
                     'id',

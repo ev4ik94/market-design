@@ -9,39 +9,39 @@ export default function Navbar() {
 
     return (
         <>
-            <div className="side-bar bg-info col-3 position-fixed">
+            <div className="side-bar col-3 position-fixed">
                 <div className="title-dash">
-                    <h4 className="font-weight-bold text-white text-center">Admin Panel</h4>
+                    <h4 className="font-weight-bold text-center">Admin Panel</h4>
                 </div>
                 <ul className="nav flex-column">
                     <li className={router.pathname=='/admin'?'nav-item active':'nav-item'}>
                         <Link  href='/admin'>
-                            <a className="nav-link  text-white">Главная</a>
+                            <a className="nav-link ">Main</a>
                         </Link>
                     </li>
                     <li className={router.pathname=='/admin/users'?'nav-item active':'nav-item'}>
                         <Link href='/admin/users'>
-                            <a className="nav-link  text-white">Пользователи</a>
+                            <a className="nav-link">Users</a>
                         </Link>
                     </li>
                     <li className={router.pathname=='/admin/shop-products'?'nav-item active':'nav-item'}>
                         <Link href='/admin/products'>
-                            <a className="nav-link text-white">Товары</a>
+                            <a className="nav-link">Products</a>
                         </Link>
                     </li>
                     <li className={router.pathname=='/admin/reviews'?'nav-item active':'nav-item'}>
                         <Link href='/admin/reviews'>
-                            <a className="nav-link text-white" href="#">Отзывы</a>
+                            <a className="nav-link" href="#">Reviews</a>
                         </Link>
                     </li>
                     <li className={router.pathname=='/admin/banners'?'nav-item active':'nav-item'}>
                         <Link href='/admin/banners'>
-                            <a className="nav-link text-white" href="#">Баннеры</a>
+                            <a className="nav-link" href="#">Banners</a>
                         </Link>
                     </li>
                     <li className="nav-item">
                         <Link href='/admin/products'>
-                            <a className="nav-link text-white" href="#">Файлы</a>
+                            <a className="nav-link text-white" href="#">Files</a>
                         </Link>
                     </li>
                 </ul>
@@ -63,6 +63,9 @@ export default function Navbar() {
                     left:0;
                     padding:10px;
                     height:100%;
+                    z-index:3;
+                    background-color:#fff;
+                    box-shadow: 1px 1px 5px rgba(0,0,0,.5);
                 }
                 
                 .nav-item:hover{
@@ -74,6 +77,8 @@ export default function Navbar() {
                 .nav{
                     padding: 10px;
                 }
+                
+                .nav > li >a{color:#000;}
                 
               
             `}</style>

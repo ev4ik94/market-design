@@ -8,8 +8,20 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false
 
         },
-        address: {
-            type: Sequelize.TEXT
+        city:{
+            type:Sequelize.TEXT
+        },
+        country:{
+            type:Sequelize.TEXT
+        },
+        street:{
+            type:Sequelize.TEXT
+        },
+        postal_code:{
+            type:Sequelize.TEXT
+        },
+        province:{
+            type:Sequelize.TEXT
         }
 
     },{

@@ -6,5 +6,6 @@ export const AuthContext = React.createContext({
     email:'',
     login: ()=>{},
     logot:()=>{},
+
     isAuthorization:false
 });

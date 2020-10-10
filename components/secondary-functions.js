@@ -72,14 +72,17 @@ export function encrypt(text){
 
 export function decrypt(text){
 
-    let dt = text?text.replace(/"/g, ''):'';
-    const decipher = crypto.createDecipher('aes128','41f733');
-    let decrypted = decipher.update(dt,'hex', 'utf8');
-    decrypted += decipher.final('utf8');
+    if(text!==null && text){
+        let dt = text?text.replace(/"/g, ''):'';
+        const decipher = crypto.createDecipher('aes128','41f733');
+        let decrypted = decipher.update(dt,'hex', 'utf8');
+        decrypted += decipher.final('utf8');
 
-    let response = JSON.parse(decrypted);
+        let response = JSON.parse(decrypted);
 
-    return response;
+        return response;
+    }
+
 
 }
 

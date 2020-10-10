@@ -28,18 +28,13 @@ exports.createUser = async (req, res) => {
         data.password = await bcrypt.hash(body.password, 12);
 
 
-            UserModel.create(data).then(async(user) => {
+            UserModel.create(data).then((user) => {
 
-                await user.createAddress({address:''}).then(address=>{
-                    res.status(201).json({
-                        success:true,
-                        message: 'User created successfully',
-                        data: {user, address, cart:null}
-                    })
-
-                }).catch(err=>{res.status(400).json({success:false, message:err.message})})
-
-
+                res.status(201).json({
+                    success:true,
+                    message: 'User created successfully',
+                    data: {user}
+                })
 
          }).catch(err => {
              console.log(err)
@@ -95,8 +90,8 @@ exports.loginUser = async function(req, res, role=0){
                 include: [
                     {
                         model: Address,
-                        required: true,
-                        attributes:["id", "address"]
+                        required: true
+
                     },
                     {
                         model: Cart,
@@ -137,9 +132,15 @@ exports.updateUser = async function(req,res){
 
     try{
        const userId = req.query.id;
-        let {name, last_name} = req.body;
-        name = validator.escape(name);
-        last_name = validator.escape(last_name);
+
+        let data = {};
+        for(let value in req.body){
+            if(value==='password'){
+                data[value] = await bcrypt.hash(req.body.password, 12);
+            }else{
+                data[value] = validator.escape(req.body[value]);
+            }
+        }
 
         await checkAuth(req,res);
 
@@ -147,7 +148,7 @@ exports.updateUser = async function(req,res){
             return res.status(401).json({message: 'You are not logged in'});
         }
 
-        const userUpdate =  await UserModel.update({ name, last_name }, {
+        const userUpdate =  await UserModel.update(data, {
              where: {
                  id: userId
              }
@@ -175,7 +176,12 @@ exports.listAll = async (req, res) => {
         await UserModel.findAll({
             attributes: ['id', 'email', 'name', 'last_name', 'created_at', 'updated_at'],
             where:{role:0},
-            include: Address
+            include: [
+                {
+                    model:Address,
+                    attributes: ['city', 'country', 'postal_code', 'province', 'street']
+                }
+            ]
         }).then(user => {
             return res.status(201).json({
                 success:true,
@@ -190,10 +196,6 @@ exports.listAll = async (req, res) => {
 
 exports.getOne = async (req, res) => {
 
-    await checkAuth(req,res);
-    if(!req.user){
-        return res.status(401).json({message: 'You are not logged in'});
-    }
 
     await UserModel.findOne({
         attributes: ['id', 'email', 'name', 'last_name', 'created_at', 'updated_at'],
@@ -205,7 +207,8 @@ exports.getOne = async (req, res) => {
         include: [
             {
                 model: Address,
-                required: true
+                attributes: ['city', 'country', 'postal_code', 'province', 'street']
+
             }
         ]
     }).

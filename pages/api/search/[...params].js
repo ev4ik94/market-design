@@ -1,16 +1,15 @@
-const Review = require('../../../../controllers/review.controller');
+const search = require('../../../controllers/search.controller');
+
 
 export default async (req, res)=>{
 
     const {method} = req
 
     switch(method){
+        case 'GET':
 
-        case 'POST':
-
-            await Review.createReview(req, res)
+            await search.searchProducts(req, res)
             break
-
 
         default:
             res.status(400).json({success: false})

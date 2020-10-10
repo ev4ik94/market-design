@@ -5,7 +5,7 @@ import AdminLayout from './../../../components/admin/AdminLayout';
 import useHttp from "../../../hooks/http.hook";
 import {AuthContext} from "../../../context/auth.context";
 import {formatDate, getCookie} from "../../../components/secondary-functions";
-
+import Preloader from '../../../components/Preloader';
 
 function Users() {
 
@@ -74,7 +74,7 @@ function RenderContent(){
 
 
     if(loading){
-        return(<p>Loading</p>)
+        return(<Preloader />)
     }
 
     if(!loading){

@@ -7,6 +7,7 @@ export default async (req, res)=>{
 
     switch(method){
         case 'GET':
+
            await userWork.getOne(req,res)
             break
 

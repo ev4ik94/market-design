@@ -6,41 +6,99 @@ import Link from "next/link";
 import {getCookie, decrypt, paginationCalc} from "../components/secondary-functions";
 import ProdShop from "../components/ProdShop";
 import { useRouter } from 'next/router';
+import SecondBar from '../components/SecondBar';
+import Preloader from '../components/Preloader';
+import Error from '../components/Error';
 
-export default function Shop({products:serverProduct}) {
+export default function Shop({products:serverProduct, serverError}) {
 
     const router = useRouter()
-    const {request, loading} = useHttp();
+    const {request, loading, error} = useHttp();
     const [productsGet, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [dropdown, setDropdown] = useState('default');
     const [pagination, setPagintaion] = useState([]);
-    const {catid,page} = router.query;
+
+    const {catid,page,s, tag} = router.query;
+
 
     useEffect(()=>{
-        setDropdown('default')
-        if(!serverProduct) getProducts();
-        else{
-            setProducts(serverProduct.data&&serverProduct.data.rows?serverProduct.data.rows:[]);
-            paginationCalc(serverProduct.data&&serverProduct.data.count?serverProduct.data.count:0, 27,setPagintaion);
+        if(!s){
+            setDropdown('default')
+            if(!serverProduct) getProducts();
+            else{
+                if(serverError===null){
+                    setProducts(serverProduct.data&&serverProduct.data.rows?serverProduct.data.rows:[]);
+                    paginationCalc(serverProduct.data&&serverProduct.data.count?serverProduct.data.count:0, 27,setPagintaion);
+                }
+            }
         }
+
+
     }, [catid]);
 
+    useEffect(()=>{
+      if(s){
+          getResult();
+      }else{
+          setDropdown('default')
+          getProducts();
+      }
+
+    }, [s]);
 
 
     useEffect(()=>{
         if(!categories.length){
-            let categories = decrypt(getCookie('categories')?getCookie('categories'):'').filter(item=>item.title===router.pathname.replace('/',''));
+
+            let cookieCat = getCookie('categories') && getCookie('categories')!==null ? getCookie('categories'):null;
+            cookieCat = cookieCat!==null?decrypt(cookieCat):[];
+            let categories = cookieCat.filter(item=>item.title===router.pathname.replace('/',''));
+
             setCategories(categories.length&&categories[0].children?categories[0].children:[]);
         }
     }, [categories]);
 
+    useEffect(()=>{
+
+        if(serverError!==null){
+            if(serverError===404){
+                return window.location.href = `${process.env.API_URL}/404`;
+            }
+        }
+    }, [serverError])
+
+
+
+
+    const getResult = async()=>{
+        let params = router.query.s?router.query.s.replace('-', ' '):null;
+
+        if(params!==null){
+            await request(`${process.env.API_URL}/api/search/${params}`).then(result=>{
+                let data = [];
+
+                for(let value in result.data){
+                    if(result.data[value].products){
+                        result.data[value].products.forEach(item=>data.push(item))
+                    }else{
+                        data.push(result.data[value])
+                    }
+                }
+
+                setProducts(data)
+
+            }).catch(err=>{console.log(err.message)})
+        }
+
+
+    }
 
 
     const getProducts = async(recent=false,popular=false)=>{
 
 
-        await request(`${process.env.API_URL}/api/products?page=${page?page:1}&limit=28&${catid?'catid='+catid:'parentid=1'}${recent?'&recent=1':'&recent=0'}${popular?'&popular=1':'&popular=0'}`).then(result=>{
+        await request(`${process.env.API_URL}/api/products?page=${page?page:1}&limit=28&${catid?'catid='+catid:'parentid=1'}${recent?'&recent=1':'&recent=0'}${popular?'&popular=1':'&popular=0'}${tag?'&tag='+tag:''}`).then(result=>{
             setProducts(result.data&&result.data.rows?result.data.rows:[]);
             paginationCalc(result.data&&result.data.count?result.data.count:0, 27,setPagintaion);
         }).catch(err=>{console.log(err.message)})
@@ -68,69 +126,86 @@ export default function Shop({products:serverProduct}) {
         next = `${catid?'?catid='+catid:''}`+`${catid?'&page='+(pg+1):'?page='+(pg+1)}`,
         prev = `${catid?'?catid='+catid:''}`+`${catid?((pg-1)===0?'':'&page='+(pg-1)):((pg-1)===0?'':'?page='+(pg-1))}`;
 
+    if(loading){
+        return(<Preloader />)
+    }
+
+    if(error!==null){
+        return(<Error />)
+    }
+
+
+
 
 
     return (
         <MainLayout title={'Title'}>
 
-            <NavBar categories={categories} />
+            <SecondBar categories={categories} />
 
-            <div style={{padding:'35px 25px 10px'}} className="mb-3">
-                <p className="text-uppercase d-flex mb-0">you are here: <Link href="/">
-                    <a className="nav-link">home</a>
-                </Link> / shop</p>
-                <div className="dropdown d-flex justify-content-end">
-                    <a className="dropdown-toggle text-uppercase d-block" href="#" role="button" id="dropdownMenuLink"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {dropdown}
-                    </a>
+            {
+                s ?(<div className="container pt-3 bp-3" style={{fontSize:'1.3rem'}}>
 
-                    <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <a className="dropdown-item text-uppercase" href="default" onClick={filterProduct}>default</a>
-                        <a className="dropdown-item text-uppercase" href="popular" onClick={filterProduct}>popular</a>
-                        <a className="dropdown-item text-uppercase" href="recent" onClick={filterProduct}>recent</a>
+                    <p>Searching results for:&nbsp; <span className="font-weight-bold">{s}</span></p>
+                </div>):(<div style={{padding:'35px 25px 10px'}} className="mb-3 container">
+                    <p className="text-uppercase d-flex mb-0">you are here: <Link href="/">
+                        <a className="nav-link">home</a>
+                    </Link> / shop</p>
+                    <div className="dropdown d-flex justify-content-lg-end justify-content-start">
+                        <a className="dropdown-toggle text-uppercase d-block" href="#" role="button" id="dropdownMenuLink"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {dropdown}
+                        </a>
+
+                        <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a className="dropdown-item text-uppercase" href="default" onClick={filterProduct}>default</a>
+                            <a className="dropdown-item text-uppercase" href="popular" onClick={filterProduct}>popular</a>
+                            <a className="dropdown-item text-uppercase" href="recent" onClick={filterProduct}>recent</a>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div>)
+            }
 
-            <ProdShop products={productsGet}/>
+            <ProdShop products={productsGet} minHeight={'500px'}/>
 
-            <nav aria-label="Page navigation example">
-                <ul className={productsGet.length?'pagination justify-content-center':'d-none'}>
-                    <li className={page&&Number(page)>0?'page-item':'d-none'}>
-                        <Link href={`/shop${prev}`}>
-                            <a className="page-link" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                                <span className="sr-only">Previous</span>
-                            </a>
-                        </Link>
-                    </li>
-                    {
-                        pagination.map(item=>{
+            {
+                router.query.s?(''):(<nav aria-label="Page navigation example">
+                    <ul className={productsGet.length?'pagination justify-content-center':'d-none'}>
+                        <li className={page&&Number(page)>0?'page-item':'d-none'}>
+                            <Link href={`/shop${prev}`}>
+                                <a className="page-link" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span className="sr-only">Previous</span>
+                                </a>
+                            </Link>
+                        </li>
+                        {
+                            pagination.map(item=>{
 
-                            let path = `${catid?'?catid='+catid:'?'}`+`${catid?'&page='+item:'page='+item}`;
+                                let path = `${catid?'?catid='+catid:'?'}`+`${catid?'&page='+item:'page='+item}`;
 
-                            return(
-                                <li className={pg===item?'page-item active':'page-item'} key={item}>
-                                    <Link href={`/shop${path}`}>
-                                        <a className="page-link">
-                                            {item}
-                                        </a>
-                                    </Link>
-                                </li>
-                            )
-                        })
-                    }
-                    <li className={pg>1?'page-item':'d-none'}>
-                        <Link href={`/shop${next}`}>
-                            <a className="page-link" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                                <span className="sr-only">Next</span>
-                            </a>
-                        </Link>
-                    </li>
-                </ul>
-            </nav>
+                                return(
+                                    <li className={pg===item?'page-item active':'page-item'} key={item}>
+                                        <Link href={`/shop${path}`}>
+                                            <a className="page-link">
+                                                {item}
+                                            </a>
+                                        </Link>
+                                    </li>
+                                )
+                            })
+                        }
+                        <li className={pg>1?'page-item':'d-none'}>
+                            <Link href={`/shop${next}`}>
+                                <a className="page-link" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span className="sr-only">Next</span>
+                                </a>
+                            </Link>
+                        </li>
+                    </ul>
+                </nav>)
+            }
 
 
             <style jsx>
@@ -196,10 +271,13 @@ export default function Shop({products:serverProduct}) {
                             color:#777;
                             font-weight:bold;
                             font-size: 1.2rem;
+                            border:none;
+                            bacground-color:transparent;
                         }
                         
                         .page-link:hover{
                             color:#000;
+                            background-color:transparent;
                         }
                         
                         .pagination .active a{
@@ -208,7 +286,9 @@ export default function Shop({products:serverProduct}) {
                              color:#000;
                         }
                         
-                       
+                       @media screen and (max-width: 991px) {
+                            .dropdown{padding-top:10px;}
+                        }
                          
                         
                   
@@ -220,144 +300,24 @@ export default function Shop({products:serverProduct}) {
 }
 
 
-function NavBar({categories}){
 
-    const router = useRouter();
-    const [search,setSearch] = useState('');
-
-
-    const searchSubmit = (e)=>{
-        e.preventDefault()
-    }
-
-    return(
-        <nav className="navbar navbar-expand-lg  bg-light">
-            <ul className="navbar-nav mr-auto flex-row flex-wrap">
-                <li className="nav-item text-uppercase">
-                    <Link href="/shop">
-                        <a className={!router.query.catid?'nav-link active':'nav-link'}>all products</a>
-                    </Link>
-                </li>
-                {
-                    (categories || []).map(item=>{
-                        let path = `/shop?catid=${item.id}`;
-
-                        return(
-                            <li className="nav-item text-uppercase" key={item.id}>
-                                <Link href={path}>
-                                    <a className={router.query.catid===(item.id+'')?'nav-link active':'nav-link'}>{item.slug}</a>
-                                </Link>
-                            </li>
-                        )
-                    })
-                }
-
-            </ul>
-            <form className="form-inline my-2 my-lg-0 flex-nowrap col-md-12 col-lg-3" >
-                <input
-                    className="form-control mr-sm-2 w-100"
-                    type="search"
-                    placeholder="Search..."
-                    aria-label="Search"
-                    value={search}
-                    onChange={(e)=>setSearch(e.target.value)}
-                />
-                <button className="btn my-2 my-sm-0" type="submit" onClick={searchSubmit}>
-                    <img src="/icons/magnifying-glass.svg" className="img-contain" alt=""/>
-                </button>
-            </form>
-
-            <style jsx>
-                {
-                    `
-                    
-                        
-                        .nav-link{
-                            color: #000;
-                            text-decoration: none;
-                            font-size: .95rem;
-                            display: block;
-                            letter-spacing: .075em;
-                            padding: .5rem 1rem;
-                            
-                        }
-                        
-                        .nav-link:before{
-                            content: attr(title);
-                            display:block;
-                            font-weight:bold;
-                            height: 0;
-                            overflow: hidden;
-                            visibility: hidden;
-                            
-                        }
-                        
-                        .active{
-                            font-weight:bold;
-                        }
-                        
-                        .nav-link:hover{
-                            font-weight:bold;
-                        }
-                        
-                        .form-inline button{
-                            width: 40px;
-                            height: 40px;
-                            border: none;
-                            padding: 10px;
-                            outline:none;
-                            box-shadow:none;
-                        }
-                        
-                        .form-inline button:hover{
-                            background:transparent;
-                        }
-                        
-                        .form-inline input{
-                            border:1px solid transparent!important;
-                            outline: none;
-                            box-shadow: none;
-                            border-radius:0;
-                        }
-                        .form-inline input:focus {
-                            border:1px solid #000!important;
-                        }
-                        
-                                            
-                        
-                        .form-inline input:hover{
-                            border:1px solid #000!important;
-                            cursor:pointer;
-                        }
-                        
-                        ::placeholder { 
-                            color: #989898;
-                            opacity: 1; 
-                           }
-
-                        :-ms-input-placeholder { 
-                            color: #989898;
-                            }
-
-                        ::-ms-input-placeholder { 
-                            color: #989898;
-                        }
-                    
-                    `
-                }
-            </style>
-        </nav>
-    )
-}
 
 export async function getServerSideProps(ctx){
 
-    const {page, catid} = ctx.query;
-    const response = await fetch(`${process.env.API_URL}/api/products?page=${page?page:1}&limit=28&${catid?'catid='+catid:'parentid=1'}`)
+    const {page, catid, tag} = ctx.query;
+    let tagI = tag?`&tag=${tag}`:'';
+    const response = await fetch(`${process.env.API_URL}/api/products?page=${page?page:1}&limit=28&${catid?'catid='+catid:'parentid=1'}${tagI}`)
+        .catch(e=>e.message)
+
+    if(!response.ok){
+        return {
+            props:{products:null, serverError: response.status}
+        }
+    }
     const post = await response.json()
 
 
     return {
-        props:{products:post}
+        props:{products:post, serverError:null}
     }
 }

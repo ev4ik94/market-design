@@ -2,7 +2,7 @@ import Head from 'next/head'
 import {useState, useEffect} from 'react'
 import Link from "next/link";
 import Masonry from 'react-masonry-css'
-
+let c = typeof window === 'undefined';
 
 export default function ProductPortfolio({products}){
     const [loading, setLoading] = useState(true);
@@ -16,8 +16,10 @@ export default function ProductPortfolio({products}){
 
     useEffect(()=>{
         if(products!==null&&products.length){
+            console.log('setLoading')
             setLoading(false);
         }
+
     },[products]);
 
     if(products!==null&&!products.length){
@@ -26,6 +28,7 @@ export default function ProductPortfolio({products}){
             </div>
         )
     }
+
 
 
         return(
@@ -43,8 +46,8 @@ export default function ProductPortfolio({products}){
                                 return(
                                     <div key={item.id} className={`${loading?'w-0':'w-100'} item-product`}>
 
-                                        <a data-fancybox="gallery" href={item.Images[0].large}>
-                                            <img src={item.Images[0].small} className="img-cover"/>
+                                        <a data-fancybox="gallery" href={item && item.Images.length?item.Images[0].large:process.env.DEFAULT_IMAGE}>
+                                            <img src={item && item.Images.length?item.Images[0].small:process.env.DEFAULT_IMAGE} className="img-cover"/>
                                         </a>
 
                                     </div>

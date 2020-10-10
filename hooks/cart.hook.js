@@ -7,6 +7,8 @@ export const useCart = ()=>{
     const [ready, setReady] = useState(false);
     const {request} = useHttp();
     const [cart, setCart] = useState([]);
+    const [error, setError] = useState(null);
+
 
     const addToCartCookie = useCallback(async(product)=>{
 
@@ -14,7 +16,7 @@ export const useCart = ()=>{
         products = products?decrypt(products):[];
 
         products.push(product);
-
+        setCart(products);
         await eraseCookie('_pr_c');
         createCookie('_pr_c', encrypt(products));
 
@@ -22,18 +24,18 @@ export const useCart = ()=>{
 
     const addToCartSave = useCallback(async(token,userId,product)=>{
 
-        const body = {
-            type_cost:product.type_cost,
-            buy:'false'
-        }
+        const body = {type:product.type}
+
         await request(`${process.env.API_URL}/api/products/cart/${userId}/${product.id}`,
             'POST', body, {
             Authorization: `Bearer ${token}`
         }).then((result)=>{
-            console.log(result)
+            setError(null)
 
         })
-            .catch(err=>console.log(err));
+            .catch(err=>setError(err.message));
+
+        return true;
     }, []);
 
 
@@ -43,16 +45,19 @@ export const useCart = ()=>{
         user = user?decrypt(user):false;
 
         if(user && user.token){
-
             await request(`${process.env.API_URL}/api/products/cart/${user.userId}`,
                 'GET', null, {
                     Authorization: `Bearer ${user.token}`
                 })
-                .then(result=>setCart(result.data))
+                .then(result=> {
+                        console.log(result)
+                        setCart(result.data)
+                    }
+                )
                 .catch(err=>console.log(err));
         }else{
             let data = getCookie('_pr_c');
-            data = data?JSON.parse(data):null;
+            data = data?decrypt(data):null;
             setCart(data);
         }
 
@@ -63,6 +68,6 @@ export const useCart = ()=>{
 
 
 
-    return {addToCartCookie, addToCartSave, ready, getCart, cart};
+    return {addToCartCookie, addToCartSave, ready, getCart, cart, error};
 
 };

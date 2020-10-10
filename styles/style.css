@@ -46,6 +46,8 @@ a,button{
     cursor:pointer;
 }
 
+
+
 .modal-backdrop{
     background-color: white;
 }
@@ -69,3 +71,108 @@ a,button{
 .w-0{
     width:0;
 }
+
+
+
+/* ------Product View------- */
+
+.product-content .main-view .slick-slide{
+    height: 350px;
+    margin-bottom: 20px;
+}
+
+
+.smll-imgs .slick-slide{
+    margin: 0 5px;
+    height: 150px;
+}
+
+.modal-body .main-view .slick-slide{
+    height: 90vh;
+}
+
+.smll-imgs .slick-slide > div,
+.main-view .slick-slide > div,
+.smll-imgs .slick-slide > div>div,
+.main-view .slick-slide > div>div{
+    height:100%;
+}
+
+.image-product .smll-imgs .slick-track{
+    display: flex;
+    justify-content: space-between;
+}
+
+.slick-prev {
+    left: -30px;
+}
+
+.smll-imgs img{
+    object-fit: cover;
+}
+
+.image-product .main-view button,
+.modal-body .main-view button
+{display:none!important;}
+
+.slick-next:before,
+.slick-prev:before{
+    content:'';
+    display:block;
+    width:25px;
+    height: 40px;
+    background-repeat:no-repeat;
+    background-position: center;
+}
+
+.slick-next:before{
+    background-image:url('/icons/next.svg');
+}
+
+.slick-prev:before{
+    background-image:url('/icons/back.svg');
+}
+
+
+/*------ Form Input -----*/
+
+label{
+    letter-spacing:.1em;
+    text-transform:uppercase;;
+}
+
+input{
+    border-radius:0!important;
+    box-shadow:none!important;
+    outline:none!important;
+    border:1px solid #efefef!important;
+    height:50px!important;
+    cursor:default;
+}
+
+
+
+input:hover,input:focus{
+    border-color:#000!important;
+}
+
+.readOnlyInp input:hover{
+   border-color:#6d6f71!important;
+}
+
+.isError{
+    border-color:#ff001c!important;
+}
+
+.error-message{
+    border:1px dashed #ff001c;
+    padding:10px;
+}
+
+.error-message p{
+    color:#ff001c;
+}
+
+/*---- Media Screen ---*/
+
+

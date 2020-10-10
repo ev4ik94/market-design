@@ -6,40 +6,62 @@ import useHttp from '../hooks/http.hook';
 import Link from "next/link";
 import ProdShop from "../components/ProdShop";
 import ProductPortfolio from "../components/ProdPortfolio";
+import Preloader from '../components/Preloader';
+import Error from '../components/Error';
 
 
 export default function Home() {
 
     const [productsShop, setProductsShop] = useState(null);
     const [productsPortfolio, setProductsPortfolio] = useState(null);
-    const {request, loading} = useHttp();
+    const {request, loading, error} = useHttp();
+    const [mountShop, setMountShop] = useState(true);
+    const [mountPortfolio, setMountPortfolio] = useState(true);
+    const [errorCh, setError] = useState(null);
 
 
     useEffect(()=>{
-        if(productsShop===null){
-            getProducts(1,6)
+        if(mountShop){
+            getProducts(1,6);
+            setMountShop(false);
         }
-    }, [productsShop]);
+    }, [mountShop]);
 
     useEffect(()=>{
-        if(productsShop===null){
-            getProducts(3,18)
+
+        if(mountPortfolio) {
+            getProducts(3, 18);
+            setMountPortfolio(false);
         }
-    }, [productsPortfolio]);
+
+    }, [mountPortfolio]);
 
     const getProducts = async(catId, limit)=>{
         await request(`${process.env.API_URL}/api/products?page=1&limit=${limit}&parentid=${catId}`)
             .then(result=>{
-                if(catId===1){
-                    setProductsShop(result.data.rows)
-                }else{
-                    setProductsPortfolio(result.data.rows)
-                }
+
+                    if(catId===1){
+                        setProductsShop(result.data.rows)
+                    }else{
+                        setProductsPortfolio(result.data.rows)
+                    }
 
             })
+
             .catch(err=>{
+                setError(err.message);
                 console.log(err)
             })
+    }
+
+
+
+    if(loading){
+        return (<Preloader />)
+    }
+
+    if(errorCh!==null){
+        return(<Error />)
     }
 
 
@@ -49,15 +71,15 @@ export default function Home() {
       <MainLayout title={'Title'}>
         <Banner />
         <div className="container">
-            <div className="top-description-site col-9 mx-auto">
+            <div className="top-description-site col-lg-9 col-md-9 col-12 mx-auto">
                 <p className="text-left">
-                    <span className="font-weight-bold">DGIM STUDIO</span> - is the graphic design studio, specialized on vector graphics.
+                    <span className="font-weight-bold">PEEL PIC</span> - is the graphic design studio, specialized on vector graphics.
                     Every day we improve our skills so that you get the result you need in time.
                 </p>
             </div>
             <div className="block-shop-list">
                 <p className="font-weight-bold text-center text-uppercase pb-3" style={{fontSize:'1.5rem'}}>design for sale</p>
-                <ProdShop products={productsShop}/>
+                <ProdShop products={productsShop} minHeight={'500px'}/>
                 <Link href="/shop">
                     <a className="text-uppercase btn-more d-block text-center mx-auto">
                         see more
@@ -100,6 +122,12 @@ export default function Home() {
                         .btn-more:hover{
                             background-color:#000;
                             color:#fff;
+                        }
+                        
+                        @media screen and (max-width: 600px) {
+                        
+                            .top-description-site p{font-size:1rem;}
+                            
                         }
                   
                   `

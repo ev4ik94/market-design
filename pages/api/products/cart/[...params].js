@@ -11,7 +11,12 @@ export default async (req, res)=>{
             break
 
         case 'GET':
+
             await Cart.getCart(req, res);
+            break
+
+        case 'DELETE':
+            await Cart.deleteCart(req, res);
             break
 
         default:
