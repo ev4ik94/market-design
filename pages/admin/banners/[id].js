@@ -28,7 +28,7 @@ function ViewComponentBan(){
     const [error, setError] = useState(false);
     const [alert, setAlert] = useState(false);
     const [errorMessage, setErrorMessage] = useState('')
-    const {request, loading} = useHttp();
+    const {request} = useHttp();
     const {token} = useContext(AuthContext);
     const {query} = useRouter();
 
@@ -65,7 +65,7 @@ function ViewComponentBan(){
 
 
 
-    const checkErrors = (message)=>{
+    /*const checkErrors = (message)=>{
         setError(true);
         setErrorMessage(message);
     }
@@ -76,7 +76,7 @@ function ViewComponentBan(){
         setTimeout(()=>{
             setAlert(false);
         }, 1500);
-    }
+    }*/
 
     const setImage = (image)=>{
         if(image!==null){

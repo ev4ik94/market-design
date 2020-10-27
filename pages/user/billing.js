@@ -1,14 +1,11 @@
-import Head from 'next/head'
 import {useState, useEffect, useRef} from 'react'
 import MainLayout from '../../components/MainLayout';
 import useHttp from '../../hooks/http.hook';
-import Link from "next/link";
-import {getCookie, decrypt, createCookie, encrypt} from "../../components/secondary-functions";
-import { useRouter } from 'next/router';
+import {decrypt} from "../../components/secondary-functions";
 import {useAuth} from "../../hooks/auth.hook";
 import NavUsers from '../../components/user/navUser';
-import Preloader from "../../components/Preloader";
-import Error from "../../components/Error";
+import {Preloader} from "../../components/Preloader";
+
 
 
 export default function Billing({users:serverUser, serverErr}) {
@@ -64,8 +61,8 @@ export default function Billing({users:serverUser, serverErr}) {
     }, [mount])
 
     useEffect(()=>{
-        if(serverError!==null){
-            if(serverError===404){
+        if(serverErr!==null){
+            if(serverErr===404){
                 return window.location.href = `${process.env.API_URL}/404`;
             }
         }

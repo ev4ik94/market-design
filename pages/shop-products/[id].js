@@ -1,23 +1,29 @@
-import Head from 'next/head'
 import {useState, useEffect,useRef} from 'react'
-import MainLayout from '../../components/MainLayout';
 import useHttp from '../../hooks/http.hook';
 import Link from "next/link";
-import {getCookie, decrypt} from "../../components/secondary-functions";
 import { useRouter } from 'next/router';
-import Slider from "react-slick";
 import React from 'react';
-import SecondBar from '../../components/SecondBar';
 import {useAuth} from "../../hooks/auth.hook";
-import {useCart} from "../../hooks/cart.hook";
+import {getCookie, decrypt} from '../../components/secondary-functions';
+
+/*----Redux---*/
+import {connect} from 'react-redux';
+import {addToCartCookie, addToCartDb} from '../../redux/actions/actionCart';
+
+
+/*----Components---*/
 import ProductShop from "../../components/ProdShop";
 import Error from "../../components/Error";
-import Preloader from "../../components/Preloader";
+import {Preloader} from "../../components/Preloader";
+import SecondBar from '../../components/SecondBar';
+import Slider from "react-slick";
+import MainLayout from '../../components/MainLayout';
 
 
 
 
-export default function Product({products:serverProduct, serverErr}) {
+
+function Product({products:serverProduct, serverErr, addToCartCookie, addToCartDb}) {
 
     const router = useRouter();
     const [product,setProduct] = useState(null);
@@ -40,7 +46,7 @@ export default function Product({products:serverProduct, serverErr}) {
     const [price,setCurrentPrice] = useState('');
     const [catId, setCat] = useState(null);
 
-    const {addToCartCookie,addToCartSave, error} = useCart();
+
     const erroR = useHttp().error;
 
 
@@ -95,8 +101,6 @@ export default function Product({products:serverProduct, serverErr}) {
 
 
 
-
-
     const toggleReadMore = (show, height, element)=>{element.style = show?`height:${height}px;`:`height:${''};`};
 
 
@@ -137,16 +141,19 @@ export default function Product({products:serverProduct, serverErr}) {
 
     const addToCart = async()=>{
 
-        const body = {id,type: priceCheck};
+        const body = {id,type: priceCheck, prod:product};
 
         if(token && token!==null){
-           await addToCartSave(token, userId, body)
+           await addToCartDb(body, userId, token);
+            setSuccess(true);
+
         }else{
 
             let imgM = product.Images && product.Images.length ? product.Images.filter(item=>item.main): null;
             let img = imgM && imgM!==null && imgM.length?imgM[0].small:process.env.DEFAULT_IMAGE;
 
             await addToCartCookie({
+                id: Date.now(),
                 type_cost:priceCheck,
                 buy:false,
                 Product:{
@@ -156,14 +163,11 @@ export default function Product({products:serverProduct, serverErr}) {
                     title: product.title
 
                 }
-            })
+            });
+
+            setSuccess(true);
 
         }
-
-        setTimeout(()=>{
-            if(error===null) setSuccess(true);
-            else setError(err.message);
-        }, 500);
 
     }
 
@@ -297,6 +301,7 @@ export default function Product({products:serverProduct, serverErr}) {
                                                         <div className="check-box mt-1 mr-3" onClick={()=>{
                                                             setPrice(item.type);
                                                             setCurrentPrice(item.cost);
+                                                            setSuccess(false);
                                                         }}>{priceCheck===item.type?(<span>✓</span>):''}</div>
                                                         <p className="mb-0">For {item.type} use</p>
                                                     </div>
@@ -856,7 +861,7 @@ function AlsoLike({id,catid}){
 
     const [products, setProducts] = useState([]);
     const {request} = useHttp();
-    const [mount, setMount] = useState(true);
+    //const [mount, setMount] = useState(true);
 
 
     const getProducts = async()=>{
@@ -1044,6 +1049,19 @@ export async function getServerSideProps(ctx){
         props:{products:post, serverErr:error}
     }
 }
+
+const mapStateToProps = state => ({
+    cart: state
+});
+
+const mapDispatchToProps = {
+    addToCartCookie,
+    addToCartDb
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Product);
+
+
 
 
 

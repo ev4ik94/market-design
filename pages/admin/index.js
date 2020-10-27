@@ -1,26 +1,14 @@
-import Head from 'next/head'
-import {useState, useEffect, useContext} from 'react';
 import AdminLayout from "../../components/admin/AdminLayout";
 
 
 export default function Home() {
 
+ 
     return (
         <AdminLayout>
-           <ul className="pl-0 pt-5">
-               <li>
-                   <div className="card" style={{width:'18rem'}}>
-                       <div className="card-body">
-                           <h5 className="card-title">Card title</h5>
-                           <h6 className="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                           <p className="card-text">Some quick example text to build on the card title and make up the
-                               bulk of the card's content.</p>
-                           <a href="#" className="card-link">Card link</a>
-                           <a href="#" className="card-link">Another link</a>
-                       </div>
-                   </div>
-               </li>
-           </ul>
+           <div className="icon-logo mx-auto col-6" style={{padding:'10px'}}>
+             <img src="/icons/peelpic.svg" />
+           </div>
 
         </AdminLayout>
     )

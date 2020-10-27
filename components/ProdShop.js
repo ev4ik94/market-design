@@ -1,10 +1,7 @@
-import {useState, useEffect} from 'react'
-import useHttp from '../hooks/http.hook';
 import Link from "next/link";
-import {useRouter} from "next/router";
+
 
 export default function ProductShop({products, minHeight=''}){
-    const router = useRouter();
 
     if(products!==null&&!products.length){
         return(<div style={{minHeight:'500px'}}>

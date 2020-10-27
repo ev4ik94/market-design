@@ -1,4 +1,4 @@
-const Cart = require('../../../../controllers/cart.controller');
+const Cart = require('../../../../backend/controllers/cart.controller');
 
 export default async (req, res)=>{
 

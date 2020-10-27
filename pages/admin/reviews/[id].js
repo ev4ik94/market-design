@@ -1,19 +1,14 @@
-import Head from 'next/head'
 import {useState, useEffect, useContext, useCallback} from 'react'
-import Link from 'next/link'
 import AdminLayout from './../../../components/admin/AdminLayout';
 import useHttp from "../../../hooks/http.hook";
 import {AuthContext} from "../../../context/auth.context";
-import {formatDate} from "../../../components/secondary-functions";
 import {useRouter} from "next/router";
 
 export default function ReviewView() {
 
     return (
         <AdminLayout>
-
             <RenderReview />
-
         </AdminLayout>
     )
 }

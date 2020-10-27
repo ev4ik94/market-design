@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import {useState, useEffect} from 'react'
 import MainLayout from '../components/MainLayout';
 import useHttp from '../hooks/http.hook';
@@ -7,7 +6,7 @@ import {getCookie, decrypt, paginationCalc} from "../components/secondary-functi
 import ProdShop from "../components/ProdShop";
 import { useRouter } from 'next/router';
 import SecondBar from '../components/SecondBar';
-import Preloader from '../components/Preloader';
+import {Preloader} from '../components/Preloader';
 import Error from '../components/Error';
 
 export default function Shop({products:serverProduct, serverError}) {

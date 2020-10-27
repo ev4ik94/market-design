@@ -1,18 +1,15 @@
-import Head from 'next/head'
 import {useState, useEffect, useContext, useCallback} from 'react'
 import Link from 'next/link'
 import AdminLayout from './../../../components/admin/AdminLayout';
 import useHttp from "../../../hooks/http.hook";
 import {AuthContext} from "../../../context/auth.context";
-import {formatDate} from "../../../components/secondary-functions";
+import {PreloaderComp} from "../../../components/Preloader";
 
 export default function Banners() {
 
     return (
         <AdminLayout>
-
             <RenderBanners />
-
         </AdminLayout>
     )
 }
@@ -22,7 +19,7 @@ function RenderBanners(){
     const [banners, setDanners] = useState([]);
     const {request, loading} = useHttp();
     const {token} = useContext(AuthContext);
-    const [deleteUs, setDel] = useState(false);
+    //const [deleteUs, setDel] = useState(false);
     const [error, setError] = useState(false);
     const [alert, setAlert] = useState(false);
 
@@ -80,7 +77,7 @@ function RenderBanners(){
 
 
     if(loading){
-        return(<p>Loading</p>)
+        return(<PreloaderComp />)
     }
 
     if(!loading){
@@ -101,7 +98,12 @@ function RenderBanners(){
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <h3 className="text-center">Список всех Баннеров</h3>
+        <h3 className="text-center">List of Banners</h3>
+        <div className="create-ban-link mt-3">
+            <Link href={`./banners/create`}>
+                <a className="text-success font-weight-bold">+ Create new Banner</a>
+            </Link>
+        </div>
         <table className="mt-5">
             <thead>
             <tr>
@@ -162,11 +164,7 @@ function RenderBanners(){
             </tbody>
         </table>
 
-        <div className="create-ban-link mt-3">
-            <Link href={`./banners/create`}>
-                <a className="text-success font-weight-bold">+ Create new Banner</a>
-            </Link>
-        </div>
+        
 
         <style jsx>{
             `

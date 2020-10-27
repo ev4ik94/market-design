@@ -1,4 +1,4 @@
-const Cost = require('../../../../../controllers/cost.controller');
+const Cost = require('../../../../../backend/controllers/cost.controller');
 
 
 export default async (req, res)=>{

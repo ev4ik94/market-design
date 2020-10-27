@@ -2,56 +2,113 @@ import {useState, useEffect, useContext, useCallback} from 'react'
 import Link from 'next/link'
 import AdminLayout from './../../../components/admin/AdminLayout';
 import useHttp from "../../../hooks/http.hook";
-import {AuthContext} from "../../../context/auth.context";
 import {formatDate} from "../../../components/secondary-functions";
+import {decrypt} from '../../../components/secondary-functions';
+import {useAuth} from '../../../hooks/auth.hook';
+import {PreloaderComp} from '../../../components/Preloader';
+import Error from '../../../components/Error';
+
+function Products({serverProducts, serverErr}) {
+
+    const [products, setProducts] = useState([]);
+    const [mount, setMount] = useState(true);
+    const [error, setError] = useState(null);
+    const {request, loading} = useHttp();
+    const {token, logout} = useAuth();
+    const [alert, setAlert] = useState(false);
+ 
+    useEffect(()=>{
+        if(mount){
+            if(!serverProducts) fetchLinks();
+
+            else{
+                if(serverErr===null){
+                    setProducts(serverProducts.data);
+
+                }else{
+                    setError(serverErr);
+                }
+            }
+
+            setMount(false);
+           
+        }
+    }, [serverProducts]);
 
 
-function Products() {
+    useEffect(()=>{
+        if(serverErr!==null){
+            if(serverErr===404){
+                return window.location.href = `${process.env.API_URL}/404`;
+            }
+
+            if(serverErr===401){
+                logout();
+            }
+        }
+    }, [serverErr])
+
+    const fetchLinks = async ()=>{
+
+        try{
+          
+            await request(`${process.env.API_URL}/api/admin/products`, 'GET', null, {
+                Authorization: `Bearer ${token}`
+            }).then(result=>setProduct(result.data))
+            .catch(err=>setError(err.message))
+        }catch(e){
+            console.log(e.message)
+        }
+    };
+
+    const deleteProduct = async (id)=>{
+
+        try{
+            await request(`${process.env.API_URL}/api/admin/products/${id}`, 'DELETE', null, {
+                Authorization: `Bearer ${token}`
+            }).then(()=>{
+                setProducts(products.filter(item=>item.id!==id));
+                setAlert('Product removed successfully!');
+
+                setTimeout(()=>{setAlert(false)}, 3000)
+            })
+                .catch(err=>setAlert(err.message));
+
+        }catch(e){
+            setError(e.message)
+        }
+    }
+
+    if(loading){(<PreloaderComp />)}
+
+    if(error){(<Error />)}
+
+    if(!loading){
+        if(!products.length){
+            return(<AdminLayout>
+                <p className="text-center mt-5">This list is empty</p>
+                <Link href={`./products/create`} as={`./products/create`} >
+                    <a>
+                        <p className="text-success font-weight-bold">
+                            + Create New Product
+                        </p>
+                    </a>
+                </Link>
+            </AdminLayout>)
+        }
+    }
 
     return (
         <AdminLayout>
-            <RenderProducts />
+            <RenderProducts products={products} alert={alert} onRemove={deleteProduct}/>
         </AdminLayout>
     )
 }
 
 
-function RenderProducts(){
-    const [products, setProduct] = useState([]);
-    const {request, loading} = useHttp();
-    const {token} = useContext(AuthContext);
-    const [error, setError] = useState(false);
-    const [alert, setAlert] = useState(false);
-
-    const fetchLinks = useCallback(async ()=>{
-
-        try{
-            const abortController = new AbortController();
-            const signal = abortController.signal;
-
-            await request(`${process.env.API_URL}/api/admin/products`, 'GET', null, {
-                Authorization: `Bearer ${token}`
-            }, signal).then(result=>{
-
-                setProduct(result.data);
-
-
-            });
-
-            return function cleanup(){
-                abortController.abort();
-            }
-        }catch(e){
-            console.log(e.message)
-        }
-    }, [request, token]);
-
-    useEffect(()=>{
-        if(!products.length){
-            fetchLinks();
-        }
-    }, [fetchLinks]);
-
+function RenderProducts({products, alert, onRemove}){
+   
+    
 
     const cutText = (text)=>{
 
@@ -74,50 +131,23 @@ function RenderProducts(){
     }
 
 
-
-
-    const deleteProduct = async (id)=>{
-        try{
-            await request(`${process.env.API_URL}/api/admin/products/${id}`, 'DELETE', null, {
-                Authorization: `Bearer ${token}`
-            }).then(()=>{
-                fetchLinks();
-                setAlert('Продукт успешно удален!');
-
-                setTimeout(()=>{setAlert(false)}, 3000)
-            })
-                .catch(err=>console.log(err));
-
-        }catch(e){
-            setError(e.message)
-        }
-    }
-
-
-
-    if(loading){
-        return(<p>Loading</p>)
-    }
-
-    if(!loading){
-        if(!products.length){
-            return(<p className="text-center mt-5">Список Пуст</p>)
-        }
-    }
-
     return( <div className="wrap-main container">
         <div className={`alert alert-success position-fixed ${alert?'show':'fade'}`} role="alert" >
             {alert}
         </div>
-        <div className={`alert alert-danger position-fixed ${error?'show':'fade'}`} role="alert">
-            <strong className="text-center">Error!</strong>
-            <br />
-            {error}
-            <button type="button" className="close position-absolute" onClick={()=>setError(false)}>
-                <span aria-hidden="true">&times;</span>
-            </button>
+      
+        <h3 className="text-center">List of all products</h3>
+
+         <div className="mt-3">
+            <Link href={`./products/create`} as={`./products/create`} >
+                <a>
+                    <p className="text-success font-weight-bold">
+                        + Create New Product
+                    </p>
+                </a>
+            </Link>
         </div>
-        <h3 className="text-center">Список всех продуктов</h3>
+
         <table className="mt-5">
             <thead>
             <tr>
@@ -132,7 +162,7 @@ function RenderProducts(){
             </thead>
             <tbody>
             {
-                (products||[]).map(item=>{
+                products.map(item=>{
 
                     const date_create = formatDate(item.createdAt);
                     let imageMain = item.Images.length?(item.Images.filter(item=>item.main).length?item.Images.filter(item=>item.main)[0].small:item.Images[0].small):process.env.DEFAULT_IMAGE;
@@ -167,7 +197,7 @@ function RenderProducts(){
                                             </div>
                                         </a>
                                     </Link>
-                                    <div className="icon-tool" onClick={()=>deleteProduct(item.id)}>
+                                    <div className="icon-tool" onClick={onRemove.bind(null, item.id)}>
                                         <img src="../static/icons/delete.svg" alt=""/>
                                     </div>
                                 </div>
@@ -178,15 +208,7 @@ function RenderProducts(){
             }
             </tbody>
         </table>
-        <div className="mt-3">
-            <Link href={`./products/create`} as={`./products/create`} >
-                <a>
-                    <p className="text-success font-weight-bold">
-                        + Create New Product
-                    </p>
-                </a>
-            </Link>
-        </div>
+       
         <style jsx>{
             `
                 table{
@@ -256,6 +278,48 @@ function RenderProducts(){
             `
         }</style>
     </div>);
+}
+
+
+export async function getServerSideProps(ctx){
+
+    if(ctx.req.headers.cookie){
+        let cookie = ctx.req.headers.cookie.split(';').filter(item=>item.indexOf('users')>0);
+        let ind = cookie.length && cookie[0].indexOf('=')>0?cookie[0].indexOf('='):null;
+
+        if(cookie.length && ind!==null){
+
+            let users = decrypt(cookie[0].slice(ind+1));
+
+            const response = await fetch(`${process.env.API_URL}/api/admin/products`, {
+                headers:{
+                    'Content-Type' : 'application/json',
+                    Authorization: `Bearer ${users.token}`
+                }
+            })
+
+      
+
+            if(!response.ok){
+                return{
+                    props:{serverProducts:null, serverErr:response.status}
+                }
+            }
+
+            const serverProducts = await response.json();
+                    
+
+            return {
+                props:{serverProducts, serverErr:null}
+            }
+        }
+
+    }
+    return {
+        props:{serverProducts:null, serverErr:'Something went wrong'}
+    }
+
+
 }
 
 

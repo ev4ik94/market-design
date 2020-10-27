@@ -1,4 +1,4 @@
-const Category = require('../../../controllers/category.controller');
+const Category = require('../../../backend/controllers/category.controller');
 
 export default async (req, res)=>{
     const {method} = req

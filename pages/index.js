@@ -1,26 +1,27 @@
-import Head from 'next/head'
 import {useState, useEffect} from 'react'
 import MainLayout from '../components/MainLayout';
-import Banner from "../components/Banner";
+import Banner from "../components/home-components/Banner";
 import useHttp from '../hooks/http.hook';
 import Link from "next/link";
 import ProdShop from "../components/ProdShop";
 import ProductPortfolio from "../components/ProdPortfolio";
-import Preloader from '../components/Preloader';
+import {Preloader} from '../components/Preloader';
 import Error from '../components/Error';
 
 
-export default function Home() {
+
+export default function Home({props}) {
 
     const [productsShop, setProductsShop] = useState(null);
     const [productsPortfolio, setProductsPortfolio] = useState(null);
-    const {request, loading, error} = useHttp();
+    const {request, loading} = useHttp();
     const [mountShop, setMountShop] = useState(true);
     const [mountPortfolio, setMountPortfolio] = useState(true);
     const [errorCh, setError] = useState(null);
 
 
     useEffect(()=>{
+
         if(mountShop){
             getProducts(1,6);
             setMountShop(false);
@@ -136,6 +137,8 @@ export default function Home() {
       </MainLayout>
   )
 }
+
+
 
 
 

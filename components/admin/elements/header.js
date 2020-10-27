@@ -1,8 +1,6 @@
-import Head from 'next/head'
-import {useState, useEffect, useContext} from 'react'
-import Link from 'next/link'
+import {useContext} from 'react'
 import {AuthContext} from "../../../context/auth.context";
-import {useAuth} from "../../../hooks/auth.hook";
+
 
 
 export default function Header() {

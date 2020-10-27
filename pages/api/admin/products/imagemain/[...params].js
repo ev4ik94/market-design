@@ -1,4 +1,4 @@
-const Image = require('../../../../../controllers/image.controller');
+const Image = require('../../../../../backend/controllers/image.controller');
 
 
 

@@ -1,4 +1,4 @@
-const Product = require('../../../controllers/product.controller');
+const Product = require('../../../backend/controllers/product.controller');
 
 
 export const config = {

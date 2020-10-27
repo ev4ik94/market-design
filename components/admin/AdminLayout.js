@@ -1,10 +1,10 @@
 import Head from 'next/head';
-import {useState, useEffect, useContext} from 'react';
+import {useState, useContext} from 'react';
 import NavSide from './elements/sideNav';
 import {AuthContext} from "../../context/auth.context";
 import {useAuth} from "../../hooks/auth.hook";
 import Header from "../../components/admin/elements/header";
-
+import {PreloaderComp} from '../../components/Preloader';
 
 
 export default function AdminLayout({children}) {
@@ -12,13 +12,8 @@ export default function AdminLayout({children}) {
     const {token, userId, login, logout, ready} = useAuth();
     const isAuthentication = !!token;
 
-    const addPropsToChildren = (children, props) =>
-        React.Children.map(children, el =>
-            React.cloneElement(el, props)
-        )
-
     if(!ready){
-        return <p>Loading ...</p>
+        return (<PreloaderComp />)
     }
     return (
 
@@ -119,7 +114,7 @@ function Authenticate(){
             <style jsx>{`
                 .wrap-main-form-admin{
                         height:99vh;
-                        background: url('/images/back-form.jpg');
+                        background: url('/back-form.jpg');
                     }
                  
                  .wrap-form{

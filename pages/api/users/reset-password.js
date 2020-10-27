@@ -1,5 +1,5 @@
 
-const db = require('../../../utils/db.config');
+const db = require('../../../backend/utils/db.config');
 const UserModel = db.user;
 const ResetToken = db.resetPassword;
 const bcrypt = require('bcryptjs');

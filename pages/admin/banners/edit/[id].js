@@ -28,7 +28,7 @@ function EditComponentBan(){
     const [error, setError] = useState(false);
     const [alert, setAlert] = useState(false);
     const [errorMessage, setErrorMessage] = useState('')
-    const {request, loading} = useHttp();
+    const {request} = useHttp();
     const {token} = useContext(AuthContext);
     const {query} = useRouter();
 
@@ -65,11 +65,6 @@ function EditComponentBan(){
     }, [fetchLinks]);
 
 
-    useEffect(()=>{
-        if(banner!==null){
-
-        }
-    }, [banner]);
 
     const editBanner = async (e)=>{
 

@@ -1,12 +1,11 @@
-import Head from 'next/head'
 import {useState, useEffect} from 'react'
 import MainLayout from '../components/MainLayout';
 import useHttp from '../hooks/http.hook';
 import Link from "next/link";
 import ProdPortfolio from "../components/ProdPortfolio";
 import {useRouter} from "next/router";
-import {decrypt, getCookie, paginationCalc} from "../components/secondary-functions";
-import Preloader from "../components/Preloader";
+import {decrypt, getCookie} from "../components/secondary-functions";
+import {Preloader} from "../components/Preloader";
 import Error from "../components/Error";
 
 export default function Portfolio({products:serverProd, serverError}) {

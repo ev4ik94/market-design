@@ -1,17 +1,13 @@
 import {useRouter} from "next/router";
 import Link from "next/link";
 import {useState} from 'react';
-import useHttp from '../hooks/http.hook';
+
 
 
 export default function SecondBar({categories}){
 
     const router = useRouter();
     const [search,setSearch] = useState('');
-    const {request} = useHttp();
-
-
-
 
     const searchSubmit = async (e)=>{
         e.preventDefault()

@@ -1,5 +1,5 @@
-const Product = require('../../../../controllers/product.controller');
-const Tag = require('../../../../controllers/tag.controller');
+const Product = require('../../../../backend/controllers/product.controller');
+const Tag = require('../../../../backend/controllers/tag.controller');
 export default async (req, res)=>{
 
     const {method} = req

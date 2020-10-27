@@ -1,36 +1,68 @@
-import {useState, useEffect, useContext, useCallback} from 'react'
+import {useState, useEffect} from 'react'
 import AdminLayout from './../../../components/admin/AdminLayout';
 import useHttp from "../../../hooks/http.hook";
-import {AuthContext} from "../../../context/auth.context";
-import {useRouter} from "next/router";
+import {useAuth} from '../../../hooks/auth.hook';
 import {decrypt, formatDate} from '../../../components/secondary-functions';
-import Preloader from '../../../components/Preloader';
+import {PreloaderComp} from '../../../components/Preloader';
+import Error from '../../../components/Error';
 
 
-
-export default function ViewUser({userServer, storeServer, errorServer}) {
+export default function ViewUser({userServer, storeServer, errorServer = null}) {
 
     const [user,setUser] = useState(null);
-    const [store, setStore]
-console.log(userServer)
-    return (
-        <AdminLayout>
-            <ViewComponent user="" store="" errors=""/>
-        </AdminLayout>
-    )
-}
-
-
-function ViewComponent({userServer, storeServer, errorServer}){
-
-    const [user, setUser] = useState(null);
-    const [store, setStore] = useState(null);
+    const [store, setStore] = useState([]);
+    const [error, setError] = useState(null);
     const [mountUser, setMountUser] = useState(true);
     const [mountStore, setMountStore] = useState(true);
     const {request, loading} = useHttp();
-    const {token, userId, logout} = useContext(AuthContext);
-    const {query} = useRouter();
-    const [error, setError] = useState(null);
+    const {logout, token, userId} = useAuth()
+   
+    useEffect(()=>{
+        if(mountUser){
+            if(!userServer) getUser();
+
+            else{
+                if(errorServer===null){
+                    setUser(userServer);
+                }else{
+                    setError(errorServer)
+                }
+            }
+            setMountUser(false);
+        }
+        
+    }, [userServer]);
+
+    useEffect(()=>{
+        
+        if(mountStore){
+            if(!storeServer) fetchLinks();
+
+            else{
+                if(errorServer===null){
+                    setStore(storeServer.data);
+                }else{
+                    setError(errorServer)
+                }
+            }
+
+            setMountStore(false);
+        }
+    }, [storeServer]);
+
+
+
+    useEffect(()=>{
+        if(errorServer!==null){
+            if(errorServer===404){
+                return window.location.href = `${process.env.API_URL}/404`;
+            }
+
+            if(errorServer===401){
+                logout();
+            }
+        }
+    }, [errorServer])
 
     const fetchLinks = async ()=>{
 
@@ -40,8 +72,8 @@ function ViewComponent({userServer, storeServer, errorServer}){
             }).then(result=>{
                setStore(result.data);
 
-           }).catch(err=>{
-               setError(err.message)
+           }).catch(()=>{
+               setError(500)
            });
 
         }catch(e){console.log(e)}
@@ -49,7 +81,7 @@ function ViewComponent({userServer, storeServer, errorServer}){
     };
 
 
-    const storeUser = async ()=>{
+    const getUser = async ()=>{
 
         try{
             await request(`${process.env.API_URL}/api/users/${query.id}`, 'GET', null, {
@@ -57,87 +89,73 @@ function ViewComponent({userServer, storeServer, errorServer}){
             }).then(result=>{
                 setUser(result.data);
 
-            }).catch(err=>{
-                setError(err.message)
+            }).catch(()=>{
+                setError(500)
             });
 
         }catch(e){console.log(e)}
 
     };
 
+    if(loading){return(<PreloaderComp />)}
+
+    if(error){return(<Error />)}
+
+    
+    return (
+        <AdminLayout>
+            <ViewComponent user={user} store={store} error={error}/>
+        </AdminLayout>
+    )
+}
 
 
-    useEffect(()=>{
-        if(mountUser){
+function ViewComponent({user, store}){
 
-            if(!userServer){
-                fetchLinks()
-            }else{
-                if(errorServer===401) logout();
-                setError(errorServer);
-            }
-
-            setMountUser(false);
-        }
-    }, [mountUser]);
-
-    useEffect(()=>{
-        if(mountStore){
-            if(!storeServer){
-                storeUser()
-            }else{
-                if(errorServer===401) logout();
-                setError(errorServer);
-            }
-
-            setMountStore(false);
-        }
-    }, [mountStore]);
-
-    useEffect(()=>{
-        if(errorServer!==null){
-            if(errorServer===404){
-                return window.location.href = `${process.env.API_URL}/404`;
-            }
-        }
-    }, [errorServer])
 
     let date_create = '';
-    if(user!==null && user){
-        date_create = formatDate(user.created_at);
+    if(user!==null && user.data){
+        date_create = formatDate(user.data.created_at);
     }
 
-    if(loading){return(<Preloader />)}
-
+   
     let address = null;
-    if(user && user.Address){
-        address = `${user.Address.country}, ${user.Address.city}, ${user.Address.street}, ${user.Address.province}, ${user.Address.postal_code}`
+    if(user.data && user.data.Address){
+        address = `${user.data.Address.country}, ${user.data.Address.city}, ${user.data.Address.street}, ${user.data.Address.province}, ${user.data.Address.postal_code}`
     }
 
-    if(error){
-        return(<p>error</p>)
-    }
-
-   //console.log(user)
-
+   
+  
     return(
         <div className="wrap-main container">
 
+        <h2 className="text-center">User Information</h2>
+
             {
-                user!==null&&user?(
+                user!==null && user.data?(
                     <>
-                    <h3 className="text-info">{user.email}</h3>
-                     <div className="content-info mt-5">
+                    <h3 className="text-info">{user.data.email}</h3>
+                     <div className="content-info mt-3">
                          <p><span className="font-weight-bold">Created:</span> {date_create}</p>
-                         <p><span className="font-weight-bold">Name:</span> {user.name}</p>
-                         <p><span className="font-weight-bold">Last Name:</span> {user.last_name}</p>
+                         <p><span className="font-weight-bold">Name:</span> {user.data.name}</p>
+                         <p><span className="font-weight-bold">Last Name:</span> {user.data.last_name}</p>
                          <p><span className="font-weight-bold">Address:</span> {address && address!==null?address:''}</p>
                      </div>
-                        <div className="user-store">
-
-                        </div>
+                      
                     </>
                 ):(<h2 className="text-center">User is not found!</h2>)
+            }
+
+            <h2 className="text-center mt-5">Purchase History</h2>
+
+            {
+                store!==null && store.length?(<ul>
+                    {
+                        (store||[]).map(item=>(
+                            <li>{item.title}</li>
+                        ))
+                    }
+                </ul>):(<p className="text-center">This list is Empty</p>)
             }
 
         <style jsx>{
@@ -227,7 +245,7 @@ export async function getServerSideProps(ctx){
 
             const userServer = await response.json();
             const storeServer = await store.json();
-            console.log(storeServer)
+          
 
             return {
                 props:{userServer, storeServer, serverErr:null}

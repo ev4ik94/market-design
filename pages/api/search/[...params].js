@@ -1,4 +1,4 @@
-const search = require('../../../controllers/search.controller');
+const search = require('../../../backend/controllers/search.controller');
 
 
 export default async (req, res)=>{

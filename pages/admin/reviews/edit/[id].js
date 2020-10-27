@@ -2,16 +2,13 @@ import {useState, useEffect, useContext, useCallback, useRef} from 'react'
 import AdminLayout from './../../../../components/admin/AdminLayout';
 import useHttp from "../../../../hooks/http.hook";
 import {AuthContext} from "../../../../context/auth.context";
-import {formatDate} from "../../../../components/secondary-functions";
 import {useRouter} from "next/router";
 
 export default function EditReview() {
 
     return (
         <AdminLayout>
-
             <RenderEdit />
-
         </AdminLayout>
     )
 }

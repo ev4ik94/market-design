@@ -1,10 +1,9 @@
-import Head from 'next/head'
 import {useState, useEffect} from 'react'
 import {useRouter} from "next/router";
 import useHttp from "../../../hooks/http.hook";
 import MainLayout from "../../../components/MainLayout";
-import Preloader from "../../../components/Preloader";
-import Error from "../../../components/Error";
+import {Preloader} from "../../../components/Preloader";
+
 
 
 export default function ChangeForm({token: serverToken, serverErr}) {
@@ -38,8 +37,8 @@ export default function ChangeForm({token: serverToken, serverErr}) {
     }, [serverToken])
 
     useEffect(()=>{
-        if(serverError!==null){
-            if(serverError===404){
+        if(serverErr!==null){
+            if(serverErr===404){
                 return window.location.href = `${process.env.API_URL}/404`;
             }
         }
@@ -48,7 +47,7 @@ export default function ChangeForm({token: serverToken, serverErr}) {
     const checkToken = async()=>{
 
         await request(`${process.env.API_URL}/api/users/reset-password?token=${query.token}`,
-            'GET').then(result=>{
+            'GET').then(()=>{
             setError(false)
         }).catch(err=>{
             setError(err.message)

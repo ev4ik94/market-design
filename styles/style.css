@@ -141,7 +141,7 @@ label{
     text-transform:uppercase;;
 }
 
-input{
+input[type=text]{
     border-radius:0!important;
     box-shadow:none!important;
     outline:none!important;
@@ -152,7 +152,7 @@ input{
 
 
 
-input:hover,input:focus{
+input[type=text]:hover,input[type=text]:focus{
     border-color:#000!important;
 }
 

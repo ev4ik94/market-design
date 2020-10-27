@@ -1,5 +1,3 @@
-import Head from 'next/head'
-import {useState, useEffect} from 'react'
 import Link from 'next/link';
 import {useRouter} from "next/router";
 
@@ -24,7 +22,7 @@ export default function Navbar() {
                             <a className="nav-link">Users</a>
                         </Link>
                     </li>
-                    <li className={router.pathname=='/admin/shop-products'?'nav-item active':'nav-item'}>
+                    <li className={router.pathname=='/admin/products'?'nav-item active':'nav-item'}>
                         <Link href='/admin/products'>
                             <a className="nav-link">Products</a>
                         </Link>
@@ -39,9 +37,9 @@ export default function Navbar() {
                             <a className="nav-link" href="#">Banners</a>
                         </Link>
                     </li>
-                    <li className="nav-item">
-                        <Link href='/admin/products'>
-                            <a className="nav-link text-white" href="#">Files</a>
+                    <li className={router.pathname=='/admin/file'?'nav-item active':'nav-item'}>
+                        <Link href='/admin/file'>
+                            <a className="nav-link" href="#">Files</a>
                         </Link>
                     </li>
                 </ul>
@@ -54,8 +52,12 @@ export default function Navbar() {
                 }
                 
                 .nav .active{
-                    background: rgba(251,251,251,.2);
-                    border-radius: 5px;
+                    border-bottom: 1px solid #17a2b8;
+                    
+                }
+
+                .nav .active >a{
+                    color: #17a2b8;
                 }
                 
                 .side-bar{
@@ -69,9 +71,7 @@ export default function Navbar() {
                 }
                 
                 .nav-item:hover{
-                    background: rgba(251,251,251,.2);
-                    border-radius: 5px;
-                    transition:all .6s ease;
+                    font-weight:bold;
                 }
                 
                 .nav{

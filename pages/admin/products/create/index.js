@@ -1,8 +1,8 @@
-import {useState, useEffect, useContext, useCallback, useRef} from 'react'
+import {useState, useEffect, useContext, useRef} from 'react'
 import AdminLayout from './../../../../components/admin/AdminLayout';
 import useHttp from "../../../../hooks/http.hook";
 import {AuthContext} from "../../../../context/auth.context";
-import {useRouter} from "next/router";
+
 
 
 
@@ -26,9 +26,9 @@ function CreateComponent(){
     const [error, setError] = useState(false);
     const [alert, setAlert] = useState(false);
     const [errorMessage, setErrorMessage] = useState('')
-    const {request, loading} = useHttp();
+    const {request} = useHttp();
     const {token} = useContext(AuthContext);
-    const {query} = useRouter();
+
 
     const successAlert = useRef(null);
 
@@ -216,7 +216,7 @@ function Categories({productId, AlertSuccess, checkErrors}){
 
     const [categories, setCategories] = useState([]);
     const {token} = useContext(AuthContext);
-    const {request, loading} = useHttp();
+    const {request} = useHttp();
     const [selectCat, setSelect] = useState('');
 
     useEffect(()=>{
@@ -318,13 +318,13 @@ function Cost({productId, AlertSuccess, checkErrors}){
     const [personal, setPersonal] = useState({cost:''});
     const [commercial, setCommercial] = useState({cost:''});
     const [extendCommercial, setExtendCom] = useState({cost:''});
-    const [free, setFree] = useState({cost:''});
+    //const [free, setFree] = useState({cost:''});
 
     const [personalDisc, setPersonalDisc] = useState(0);
     const [commercialDisc, setCommercialDisc] = useState(0);
     const [extendCommercialDisc, setExtendComDisc] = useState(0);
     const {token} = useContext(AuthContext);
-    const {request, loading} = useHttp();
+    const {request} = useHttp();
 
     const [btnCheck, setCheck] = useState({
         Personal:false,
@@ -704,13 +704,13 @@ function Cost({productId, AlertSuccess, checkErrors}){
     )
 }
 
-function Tags({productId, AlertSuccess, checkErrors}){
+function Tags({productId, checkErrors}){
 
     const [formVisible, setFormVisible] = useState(false);
     const [tagName, setTagName] = useState('');
     const [tags, setTags] = useState([]);
     const {token} = useContext(AuthContext);
-    const {request, loading} = useHttp();
+    const {request} = useHttp();
     const inputEl = useRef(null);
     const [allTags, setTagList] = useState(null);
     const selectionInp = useRef(null);
@@ -743,7 +743,7 @@ function Tags({productId, AlertSuccess, checkErrors}){
 
             await request(`${process.env.API_URL}/api/admin/products/addTag/${productId}`, 'POST', body, {
                 Authorization: `Bearer ${token}`
-            }).then(result=>{
+            }).then(()=>{
                 for(let tag of allTags){
                     if(tag.title===selectValue){
                         console.log(tag)
@@ -784,7 +784,7 @@ function Tags({productId, AlertSuccess, checkErrors}){
     const deleteTag = async(slug)=>{
         await request(`${process.env.API_URL}/api/products/tags/${slug}`, 'DELETE', null, {
             Authorization: `Bearer ${token}`
-        }).then(async(result)=>{
+        }).then(async()=>{
             let newTags = [];
             for(let value of tags){
                 if(value.title!==slug){
@@ -801,7 +801,6 @@ function Tags({productId, AlertSuccess, checkErrors}){
         });
     }
 
-    console.log(tags)
     return(
         <div className="pt-5">
 
@@ -903,7 +902,7 @@ function Tags({productId, AlertSuccess, checkErrors}){
 function Files({productId, AlertSuccess, checkErrors}){
 
     const {token} = useContext(AuthContext);
-    const {request, loading} = useHttp();
+    const {request} = useHttp();
     const [images, setNewImage] = useState([]);
     const file = useRef(null);
     const [main, setMain] = useState(null);

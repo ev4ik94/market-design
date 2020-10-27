@@ -1,7 +1,5 @@
-import Head from 'next/head';
-import React, {useState, useEffect, useContext, useCallback, useRef} from 'react';
+import React from 'react';
 import Link from 'next/link';
-import {useRouter} from "next/router";
 import MainLayout from '../components/MainLayout';
 
 export default function Policy(){

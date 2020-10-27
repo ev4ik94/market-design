@@ -1,18 +1,30 @@
-import Head from 'next/head'
 import {useState, useEffect} from 'react'
-import MainLayout from '../components/MainLayout';
 import useHttp from '../hooks/http.hook';
 import Link from "next/link";
-import {getCookie, decrypt, createCookie, encrypt} from "../components/secondary-functions";
-import { useRouter } from 'next/router';
+import MainLayout from '../components/MainLayout';
 import {useAuth} from "../hooks/auth.hook";
-import Preloader from "../components/Preloader";
+
+/*----Redux---*/
+import {connect} from 'react-redux';
+import {getCart} from '../redux/actions/actionCart';
+
+
+/*----Components---*/
+import {Preloader} from "../components/Preloader";
 import Error from '../components/Error';
+import {FormPayment} from '../components/checkout/FormPayment';
+
+/*----functions----*/
+import {getCookie, decrypt, createCookie, encrypt} from "../components/secondary-functions";
 
 
-export default function Checkout() {
 
-    const router = useRouter()
+
+
+
+
+function Checkout({cart,getCart}) {
+
     const {request, loading, error} = useHttp();
     const [products, setProduct] = useState([]);
     const [mount, setMount] = useState(true);
@@ -24,7 +36,7 @@ export default function Checkout() {
         if(mount){
 
             if(token!==null){
-                getCartDb();
+                getCart();
             }else{
                 let pr = getCookie('_pr_c');
                 let dcrObj = pr && pr!==null?decrypt(pr):[];
@@ -38,49 +50,46 @@ export default function Checkout() {
 
     }, [mount, token]);
 
+    useEffect(()=>{
+        if(cart.cart.length){
+            setProduct(cart.cart);
+            totalCostF(cart.cart)
+        }
+    }, [cart])
+
     const totalCostF = (obj)=>{
         let total = 0;
 
         for(let value of obj){
-            let cost = value.Product.costs.filter(cost=>cost.type===value.type_cost);
+            let cost = value.Product?value.Product.costs.filter(cost=>cost.type===value.type_cost):0;
             cost = cost.length?cost[0].cost:'';
             total += Number(cost);
         }
         setCost(total);
     }
 
-
-    const getCartDb = async()=>{
-        await request(`${process.env.API_URL}/api/products/cart/${userId}`, 'GET', null, {
-            Authorization: `Bearer ${token}`
-        })
-            .then(result=>{
-                setProduct(result.data);
-                totalCostF(result.data)
-            })
-            .catch(err=>{console.log(err.message)})
-    };
-
     const removeProduct = async(id)=>{
 
         if(token!==null){
+            let a = products.length?products.filter(item=>item.id!==id):[];
             await request(`${process.env.API_URL}/api/products/cart/${userId}/${id}`, 'DELETE', null, {
                 Authorization: `Bearer ${token}`
-            })
-                .then(result=>{
-
-                    let newProd = products.length?products.filter(item=>item.id!==id):[];
-                    setProduct(newProd);
-                    totalCostF(newProd)
-                    console.log(result);
+            }).then(()=>{
+                    setProduct(a);
+                    totalCostF(a)
                 })
                 .catch(err=>{console.log(err.message)})
         }else{
 
-            let prodArr = products.length?products.filter(item=>item.id!==id):[];
-            setProduct(prodArr)
-            prodArr = encrypt(prodArr);
-            createCookie('_pr_c', prodArr)
+
+            if(id){
+                let prodArr = products.length?products.filter(item=>item.id?item.id!==id:item.Product.id!==id):[];
+                setProduct(prodArr)
+                prodArr = encrypt(prodArr);
+                createCookie('_pr_c', prodArr);
+                getCart()
+            }
+
         }
     }
 
@@ -93,7 +102,6 @@ export default function Checkout() {
     if(error!==null){
         return(<Error />)
     }
-
 
 
     return (
@@ -116,16 +124,17 @@ export default function Checkout() {
                                     costType = costType.length?costType[0].type:'';
                                     cost = cost.length?cost[0].cost:'';
 
+
                                     return(
-                                        <div className="product-item d-flex mb-5" key={index}>
+                                        <div className="product-item d-flex flex-lg-row flex-sm-row flex-column mb-5" key={index}>
                                             <Link href="/shop-products/[id]" as={`/shop-products/${item.Product.id}`}>
-                                                <a className="col-3 pl-0">
-                                                    <div className="img-product">
-                                                        <img src={item.Product && item.Product.Images?(item.Product.Images.main?item.Product.Images.small:item.Product.Images[0].small):process.env.DEFAULT_IMAGE} alt={item.title?item.title:''} />
+                                                <a className="col-lg-3 col-6 col-sm-5 pl-0">
+                                                    <div className="img-product h-100">
+                                                        <img src={item.Product && item.Product.Images?(item.Product.Images.main?item.Product.Images.small:item.Product.Images[0].small):process.env.DEFAULT_IMAGE} alt={item.title?item.title:''} className="img-cover"/>
                                                     </div>
                                                 </a>
                                             </Link>
-                                            <div className="info-product col-6 pt-5">
+                                            <div className="info-product col-lg-6 col-12 col-sm-5 pt-lg-5 pt-sm-5 pt-3">
                                                 <Link href="/shop-products/[id]" as={`/shop-products/${item.Product.id}`}>
                                                     <a>
                                                         <h2 className="font-weight">{item.Product && item.Product.title?item.Product.title:''}</h2>
@@ -237,6 +246,33 @@ export default function Checkout() {
                             background-color:#95d64c;
                         }
                         
+                        @media screen and (max-width: 991px) {
+                            .product-item > div:last-child button{
+                                opacity:1;
+                            }
+                        }
+                        
+                        @media screen and (max-width: 770px) {
+                            h2{font-size:1.6rem;}
+                            
+                            .info-product > p,
+                            .product-item > div:last-child > button
+                            {font-size:1rem;}
+                            
+                            .product-item > div:last-child > p{
+                                font-size:1.4rem;
+                            }
+                            
+                            .product-item > div:last-child > button,
+                            .product-item > div:last-child > p
+                            {padding-left:15px;}
+                        }
+                        
+                        
+                       
+                        
+                       
+                        
                   
                   `
                 }
@@ -246,82 +282,14 @@ export default function Checkout() {
 }
 
 
-function FormPayment(){
+const mapStateToProps = state => ({
+    cart: state
+});
 
-    const [name, setName] = useState('');
-    const [lastName, setlastName] = useState('');
-    const [country, setCountry] = useState('');
-    const [state, setState] = useState('');
-    const [city, setCity] = useState('');
-    const [address, setAddress] = useState('');
-    const [postCode, setPostCode] = useState('');
+const mapDispatchToProps = {
+    getCart
+};
 
-    return(
-        <div style={{marginTop:'150px'}}>
-            <h3 className="font-weight-bold">Contact information</h3>
-            <div className="forms-block d-flex justify-content-between mt-5">
-                <form className="col-5">
-                    <div className="form-group">
-                        <label htmlFor="inputNamePayment" value={name} onChange={(e)=>{setName(e.target.value)}}>first name *</label>
-                        <input type="text" className="form-control" id="inputNamePayment"
-                               aria-describedby="emailHelp" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="lastNamePayment" value={lastName} onChange={(e)=>{setLastName(e.target.value)}}>last name *</label>
-                        <input type="text" className="form-control" id="lastNamePayment" />
-                    </div>
+export default connect(mapStateToProps, mapDispatchToProps)(Checkout);
 
-                </form>
 
-                <form className="col-5">
-                    <div className="form-group">
-                        <label htmlFor="inputCountryPay" value={country} onChange={(e)=>{setCountry(e.target.value)}}>country *</label>
-                        <input type="text" className="form-control" id="inputCountryPay"
-                               aria-describedby="emailHelp" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="inputStatePayment" value={state} onChange={(e)=>{setState(e.target.value)}}>state/province *</label>
-                        <input type="text" className="form-control" id="inputStatePayment" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="inputCityPayment" value={city} onChange={(e)=>{setCity(e.target.value)}}>city *</label>
-                        <input type="text" className="form-control" id="inputCityPayment" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="inputAddresspayment" value={address} onChange={(e)=>{setAddress(e.target.value)}}>street address *</label>
-                        <input type="text" className="form-control" id="inputAddresspayment" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="postCodepayment" value={postCode} onChange={(e)=>{setpostCode(e.target.value)}}>zip/postal code *</label>
-                        <input type="text" className="form-control" id="postCodepayment" />
-                    </div>
-
-                </form>
-            </div>
-            <button className="checkout-btn text-uppercase float-right">continue checkout</button>
-
-            <style jsx>
-                {
-                    `
-                                              
-                        .checkout-btn{
-                            border:none;
-                            outline:none;
-                            background-color:#7cb342;
-                            color:#fff;
-                            transition:all .4s ease;
-                            padding: 15px 20px;
-                            margin-right: 15px;
-                        }
-                        
-                        .checkout-btn:hover{
-                            background-color:#95d64c;
-                        }
-                        
-                  
-                  `
-                }
-            </style>
-        </div>
-    )
-}

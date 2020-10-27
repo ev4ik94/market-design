@@ -1,4 +1,4 @@
-import {useState, useEffect, useContext, useCallback} from 'react'
+import {useState, useEffect, useContext, useRef} from 'react'
 import AdminLayout from './../../../components/admin/AdminLayout';
 import useHttp from "../../../hooks/http.hook";
 import {AuthContext} from "../../../context/auth.context";
@@ -20,12 +20,15 @@ export default function ViewProduct() {
 function ViewComponent(){
 
     const [product, setProduct] = useState(null);
-    const {request, loading} = useHttp();
+    const {request} = useHttp();
     const {token} = useContext(AuthContext);
     const {query} = useRouter();
     const [imageMain, setImage] = useState(process.env.DEFAULT_IMAGE);
+    const [show, setShow] = useState(false);
 
-    const fetchLinks = useCallback(async ()=>{
+    const descript = useRef(null);
+
+    const fetchLinks = async ()=>{
 
         try{
             await request(`${process.env.API_URL}/api/admin/products/${query.id}`, 'GET', null, {
@@ -40,7 +43,22 @@ function ViewComponent(){
         }catch(e){
             console.log(e)
         }
-    }, [request, token]);
+    };
+
+    const collapseBlock = (show)=>{
+        let cont = descript.current.parentElement;
+        let height = descript.current.offsetHeight;
+        setShow(show);
+        if(show){
+            cont.style = `height:${height}px`;
+        }else{
+            cont.style = ``;
+        }
+        
+
+
+
+    }
 
     useEffect(()=>{
         if(product===null){
@@ -90,15 +108,18 @@ function ViewComponent(){
                                 <div className="content-main-inf pl-2">
                                     <ul className="pl-0">
                                         <li>
-                                            <p className="font-weight-bold mb-0">Категория</p>
+                                            <p className="font-weight-bold mb-0">Categories</p>
                                             <p className="mb-0">{product.categories?product.categories.title:''}</p>
                                         </li>
                                         <li>
-                                            <p className="font-weight-bold mb-0">Описание</p>
-                                            <p className="mb-0">{product.description}</p>
+                                            <p className="font-weight-bold mb-0">Description</p>
+                                            <div className="content-description hidden">
+                                                <p className="mb-0" ref={descript}>{product.description}</p>
+                                            </div>
+                                            <button onClick={()=>collapseBlock(!show)}>{show?'hide':'read more'}</button>
                                         </li>
                                         <li>
-                                            <p className="font-weight-bold mb-0">Цена</p>
+                                            <p className="font-weight-bold mb-0">Cost</p>
                                             <ul className="pl-0">
                                                 {
                                                     (product.costs ||[]).map(item=>(
@@ -123,7 +144,7 @@ function ViewComponent(){
                                         </li>
 
                                         <li>
-                                            <p className="font-weight-bold mb-0">Теги</p>
+                                            <p className="font-weight-bold mb-0">Tags</p>
                                             <ul className="pl-0 d-flex flex-wrap">
                                                 {
                                                     (product.tags ||[]).map(item=>(
@@ -139,7 +160,7 @@ function ViewComponent(){
                                         </li>
 
                                         <li>
-                                            <p className="font-weight-bold mb-0">Публикуется {product.publish?<span className="text-success mb-0">✔</span>:
+                                            <p className="font-weight-bold mb-0">Publish {product.publish?<span className="text-success mb-0">✔</span>:
                                                 <span className="text-danger mb-0">❌</span>}</p>
                                         </li>
                                     </ul>
@@ -149,7 +170,7 @@ function ViewComponent(){
                             </div>
                         </div>
                         <div className="block-reviews mt-3">
-                            <h4>Отзывы</h4>
+                            <h2>Reviews</h2>
                             <ul className="pl-0 mt-3">
                                 {
                                     (product.review||[]).map(item=>(
@@ -205,6 +226,18 @@ function ViewComponent(){
                     margin: 3px;
                     background: #c7f2f9;
                     border-radius: 5px;
+               }
+
+               .content-description{
+                   transition:all .4s ease;
+               }
+
+               .content-description > p{line-height: 1.6;}
+
+               .content-description.hidden{
+
+                   height:200px;
+                   overflow:hidden;
                }
                
       

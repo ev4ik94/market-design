@@ -1,20 +1,18 @@
-import Head from 'next/head'
 import {useState, useEffect, useRef} from 'react'
 import MainLayout from '../../components/MainLayout';
 import useHttp from '../../hooks/http.hook';
-import Link from "next/link";
-import {getCookie, decrypt, createCookie, encrypt} from "../../components/secondary-functions";
+import {decrypt} from "../../components/secondary-functions";
 import { useRouter } from 'next/router';
 import {useAuth} from "../../hooks/auth.hook";
 import NavUsers from '../../components/user/navUser';
-import Preloader from "../../components/Preloader";
-import Error from '../../components/Error';
-import {API_ROUTE} from "next/dist/lib/constants";
+import {Preloader} from "../../components/Preloader";
+
+
 
 
 export default function User({users:serverUser, serverError}) {
 
-    const router = useRouter()
+    //const router = useRouter()
     const {request, loading, error} = useHttp();
     const [mount, setMount] = useState(true);
     const {token, userId, email} = useAuth();

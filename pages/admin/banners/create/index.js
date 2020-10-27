@@ -27,9 +27,8 @@ function CreateComponentBan(){
     const [error, setError] = useState(false);
     const [alert, setAlert] = useState(false);
     const [errorMessage, setErrorMessage] = useState('')
-    const {request, loading} = useHttp();
+    const {request} = useHttp();
     const {token} = useContext(AuthContext);
-    const {query} = useRouter();
 
     const successAlert = useRef(null);
 
@@ -38,7 +37,7 @@ function CreateComponentBan(){
         if(banner===null){
             createBanner();
         }
-    }, [createBanner]);
+    }, []);
 
 
     const createBanner = useCallback(async ()=>{
@@ -134,8 +133,6 @@ function CreateComponentBan(){
     const requestEdit = async(body)=>{
         await request(`${process.env.API_URL}/api/admin/banners/${banner.id}`, 'PUT', body, {
             Authorization: `Bearer ${token}`
-        }).then(result=>{
-
         }).catch(err=>{
             checkErrors(err.message)
         });
@@ -304,7 +301,6 @@ function CreateComponentBan(){
 function Files({banner, AlertSuccess, checkErrors, setImage}){
 
     const {token} = useContext(AuthContext);
-    const {request, loading} = useHttp();
     const file = useRef(null);
 
 

@@ -1,8 +1,7 @@
-import Head from 'next/head'
 import {useState, useEffect} from 'react'
 import Link from "next/link";
 import Masonry from 'react-masonry-css'
-let c = typeof window === 'undefined';
+
 
 export default function ProductPortfolio({products}){
     const [loading, setLoading] = useState(true);
@@ -77,40 +76,5 @@ export default function ProductPortfolio({products}){
 
 }
 
-/*
-.portfolio-shop-products{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    grid-gap: 10px;
-    grid-auto-rows: minmax(100px, auto);
-    grid-auto-flow: dense;
-    padding: 10px;
-}
-
-
-
-.item-product:nth-child(odd){
-    grid-column-end: span 3;
-    grid-row-end: span 1;
-}
-
-.item-product:nth-child(even){
-    grid-column-end: span 2;
-    grid-row-end: span 1;
-}
-
-.item-product:nth-child(1){
-    grid-column-end: span 4;
-    grid-row-end: span 1;
-}
-.item-product:nth-child(2){
-    grid-column-end: span 2;
-    grid-row-end: span 1;
-}
-.item-product:nth-child(3){
-    grid-column-end: span 2;
-    grid-row-end: span 1;
-}
-    */
 
 

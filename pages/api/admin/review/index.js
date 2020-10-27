@@ -1,4 +1,4 @@
-const Review = require('../../../../controllers/review.controller');
+const Review = require('../../../../backend/controllers/review.controller');
 
 export default async (req, res)=>{
 

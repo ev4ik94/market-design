@@ -1,12 +1,11 @@
-import Head from 'next/head'
-import {useState, useEffect, useRef} from 'react'
+import {useState, useEffect} from 'react'
 import MainLayout from '../../components/MainLayout';
 import useHttp from '../../hooks/http.hook';
 import Link from "next/link";
 import {decrypt} from "../../components/secondary-functions";
 import {useAuth} from "../../hooks/auth.hook";
 import NavUsers from '../../components/user/navUser';
-import Preloader from "../../components/Preloader";
+import {Preloader} from "../../components/Preloader";
 
 
 export default function History({history:serverUser, serverErr}) {

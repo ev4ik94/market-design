@@ -1,18 +1,16 @@
-import Head from 'next/head'
 import {useState, useEffect, useContext, useCallback} from 'react'
 import Link from 'next/link'
 import AdminLayout from './../../../components/admin/AdminLayout';
 import useHttp from "../../../hooks/http.hook";
 import {AuthContext} from "../../../context/auth.context";
 import {formatDate} from "../../../components/secondary-functions";
+import {PreloaderComp} from '../../../components/Preloader';
 
 export default function Reviews() {
 
     return (
         <AdminLayout>
-
            <RenderReviews />
-
         </AdminLayout>
     )
 }
@@ -93,12 +91,12 @@ function RenderReviews(){
 
 
         if(loading){
-            return(<p>Loading</p>)
+            return(<PreloaderComp />)
         }
 
         if(!loading){
             if(!reviews.length){
-                return(<p className="text-center mt-5">Список Пуст</p>)
+                return(<p className="text-center mt-5">This list is empty</p>)
             }
         }
 
@@ -115,7 +113,7 @@ function RenderReviews(){
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <h3 className="text-center">Список всех отзывов</h3>
+            <h3 className="text-center">List of reviews</h3>
             <table className="mt-5">
                 <thead>
                 <tr>

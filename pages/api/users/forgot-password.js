@@ -1,5 +1,5 @@
-const userWork = require('../../../controllers/user.controller');
-const db = require('../../../utils/db.config');
+const userWork = require('../../../backend/controllers/user.controller');
+const db = require('../../../backend/utils/db.config');
 const UserModel = db.user;
 const ResetToken = db.resetPassword;
 const crypto = require('crypto');

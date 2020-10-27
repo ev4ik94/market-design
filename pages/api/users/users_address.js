@@ -1,4 +1,4 @@
-const addressControl = require('../../../controllers/address.controller');
+const addressControl = require('../../../backend/controllers/address.controller');
 
 
 export default async (req, res)=>{

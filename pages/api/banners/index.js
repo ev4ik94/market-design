@@ -1,4 +1,4 @@
-const Banner = require('./../../../controllers/banner.controller');
+const Banner = require('../../../backend/controllers/banner.controller');
 
 
 export default async (req, res)=>{

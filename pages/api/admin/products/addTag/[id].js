@@ -1,4 +1,4 @@
-const Tag = require('../../../../../controllers/tag.controller');
+const Tag = require('../../../../../backend/controllers/tag.controller');
 
 
 

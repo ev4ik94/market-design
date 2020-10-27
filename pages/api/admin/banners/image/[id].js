@@ -1,4 +1,4 @@
-const ImageBanner = require('../../../../../controllers/image_banner.controller');
+const ImageBanner = require('../../../../../backend/controllers/image_banner.controller');
 
 export const config = {
     api: {

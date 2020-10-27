@@ -1,4 +1,4 @@
-const userWork = require('./../../controllers/user.controller');
+const userWork = require('../../backend/controllers/user.controller');
 
 
 export default async (req, res)=>{

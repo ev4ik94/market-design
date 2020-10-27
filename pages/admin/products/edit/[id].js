@@ -3,6 +3,7 @@ import AdminLayout from './../../../../components/admin/AdminLayout';
 import useHttp from "../../../../hooks/http.hook";
 import {AuthContext} from "../../../../context/auth.context";
 import {useRouter} from "next/router";
+import {PreloaderComp} from './../../../../components/Preloader';
 
 
 
@@ -26,7 +27,7 @@ function EditComponent(){
     const [error, setError] = useState(false);
     const [alert, setAlert] = useState(false);
     const [errorMessage, setErrorMessage] = useState('')
-    const {request, loading} = useHttp();
+    const {request} = useHttp();
     const {token} = useContext(AuthContext);
     const {query} = useRouter();
 
@@ -323,6 +324,10 @@ function Cost({product, AlertSuccess, checkErrors}){
         return price;
     }
 
+    if(loading){
+        return(<PreloaderComp />)
+    }
+
 
 
     return(
@@ -374,7 +379,7 @@ function Cost({product, AlertSuccess, checkErrors}){
                                         <button type="button"
                                                 className="btn btn-info"
                                                 onClick={()=>{
-                                                    let discount = prompt('Enter value discount in %');
+                                                    let discount = prompt('Enter value discount in %') || '';
                                                     setPersonalDisc(discount);
                                                     editCost({type:'Personal',discount})
 
@@ -382,7 +387,7 @@ function Cost({product, AlertSuccess, checkErrors}){
                                         >discount
                                         </button>
                                         <button type="button"
-                                                className="btn btn-danger"
+                                                className="btn btn-danger col-12"
                                                 onClick={()=>{deleteCost({type:'Personal'})}}
                                         >delete
                                         </button>
@@ -439,7 +444,7 @@ function Cost({product, AlertSuccess, checkErrors}){
                                         >discount
                                         </button>
                                         <button type="button"
-                                                className="btn btn-danger"
+                                                className="btn btn-danger col-12"
                                                 onClick={()=>{deleteCost({type:'Commercial'})}}
                                         >delete
                                         </button>
@@ -495,7 +500,7 @@ function Cost({product, AlertSuccess, checkErrors}){
                                         >discount
                                         </button>
                                         <button type="button"
-                                                className="btn btn-danger"
+                                                className="btn btn-danger col-12"
                                                 onClick={()=>{deleteCost({type:'Extended Commercial'})}}
                                         >delete
                                         </button>
@@ -509,11 +514,14 @@ function Cost({product, AlertSuccess, checkErrors}){
                                         <p>Free  &nbsp;&nbsp;0 $</p>
                                     </div>
 
-                                    <button type="button"
-                                            className="btn btn-danger mt-0"
+                                    <div className="btn-group flex-wrap col-5" role="group" aria-label="Basic example">
+                                      
+                                         <button type="button"
+                                            className="btn btn-danger mt-0 col-12"
                                             onClick={()=>{deleteCost({type:'Free'})}}
                                     >delete
                                     </button>
+                                    </div>
 
                                 </div>
 
@@ -534,7 +542,7 @@ function Cost({product, AlertSuccess, checkErrors}){
                         <ul className="pl-0 pt-3">
                             <li className={`${personal.length?'d-none':'d-block'}`}>
                                 <div className="container-inputs d-flex">
-                                    <div className="form-check pt-2">
+                                    <div className="form-check pt-2 col-6">
                                         <input
                                             className="form-check-input"
                                             type="checkbox"
@@ -546,12 +554,12 @@ function Cost({product, AlertSuccess, checkErrors}){
                                             Personal
                                         </label>
                                     </div>
-                                    <div className="form-group col-5 d-flex">
+                                    <div className="form-group col-4 d-flex">
 
                                         <input
 
                                             type="text"
-                                            className="form-control"
+                                            className="form-control mb-0 align-items-center"
                                             value={crtCost.Personal}
                                             name="Personal"
                                             onChange={e=>setCrtCost({...crtCost, [e.target.name]:e.target.value })}
@@ -574,7 +582,7 @@ function Cost({product, AlertSuccess, checkErrors}){
                             </li>
                             <li className={`${commercial.length?'d-none':'d-block'}`}>
                                 <div className="container-inputs d-flex">
-                                    <div className="form-check pt-2">
+                                    <div className="form-check pt-2 col-6">
                                         <input
                                             className="form-check-input"
                                             type="checkbox"
@@ -586,7 +594,7 @@ function Cost({product, AlertSuccess, checkErrors}){
                                             Commercial
                                         </label>
                                     </div>
-                                    <div className="form-group col-5 d-flex">
+                                    <div className="form-group col-4 d-flex mb-0 align-items-center">
                                         <input
                                             type="text"
                                             className="form-control"
@@ -612,9 +620,9 @@ function Cost({product, AlertSuccess, checkErrors}){
                             </li>
                             <li className={`${extendCommercial.length?'d-none':'d-block'}`}>
                                 <div className="container-inputs d-flex">
-                                    <div className="form-check pt-2">
+                                    <div className="form-check pt-2 col-6 d-flex">
                                         <input
-                                            className="form-check-input"
+                                            className="form-check-input position-relative"
                                             type="checkbox"
                                             id="extended-cost"
                                             checked={btnCheck.ExtendedCommercial}
@@ -624,10 +632,10 @@ function Cost({product, AlertSuccess, checkErrors}){
                                             Extended Commercial
                                         </label>
                                     </div>
-                                    <div className="form-group col-5 d-flex">
+                                    <div className="form-group col-4 d-flex">
                                         <input
                                             type="text"
-                                            className="form-control"
+                                            className="form-control mb-0 align-items-center"
                                             value={crtCost.ExtendedCommercial}
                                             name="Extended Commercial"
                                             onChange={e=>setCrtCost({...crtCost, ['ExtendedCommercial']:e.target.value })}
@@ -650,9 +658,9 @@ function Cost({product, AlertSuccess, checkErrors}){
                             </li>
                             <li className={`${free.length?'d-none':'d-block'}`}>
                                 <div className="container-inputs d-flex">
-                                    <div className="form-check pt-2">
+                                    <div className="form-check pt-2 col-8">
                                         <input
-                                            className="form-check-input"
+                                            className="form-check-input mb-0 align-items-center"
                                             type="checkbox"
                                             id="personal-cost"
                                             checked={btnCheck.Free}
@@ -714,6 +722,17 @@ function Cost({product, AlertSuccess, checkErrors}){
                     margin: 5px 0px;
                 }
                 
+                .container-inputs .form-check-label{
+                    align-items: center;
+                    display: flex;
+                    width: 100%;
+                    padding-left: 10px;
+                   
+                }
+
+                .container-inputs button{
+                    margin-top:20px;
+                }
              
                
                 
@@ -764,7 +783,7 @@ function TagList({product, checkErrors}){
 
             await request(`${process.env.API_URL}/api/admin/products/addTag/${product.id}`, 'POST', body, {
                 Authorization: `Bearer ${token}`
-            }).then(result=>{
+            }).then(()=>{
                 for(let tag of allTags){
                     if(tag.title===selectValue){
                         setTags([...tags, tag]);
@@ -820,6 +839,11 @@ function TagList({product, checkErrors}){
             checkErrors(err.message);
         });
     }
+
+    if(loading){
+        return(<PreloaderComp />)
+    }
+
     return(
         <div className="pt-5">
 
@@ -1001,6 +1025,10 @@ function Files({product, AlertSuccess, checkErrors}){
 
     }
 
+    if(loading){
+        return(<PreloaderComp />)
+    }
+
 
     return(
 
@@ -1122,7 +1150,9 @@ function Categories({product, AlertSuccess, checkErrors}){
 
     }
 
-
+    if(loading){
+        return(<PreloaderComp />)
+    }
 
 
     return(

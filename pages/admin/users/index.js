@@ -1,11 +1,10 @@
-import Head from 'next/head'
 import {useState, useEffect, useContext, useCallback} from 'react'
 import Link from 'next/link'
 import AdminLayout from './../../../components/admin/AdminLayout';
 import useHttp from "../../../hooks/http.hook";
 import {AuthContext} from "../../../context/auth.context";
-import {formatDate, getCookie} from "../../../components/secondary-functions";
-import Preloader from '../../../components/Preloader';
+import {formatDate} from "../../../components/secondary-functions";
+import {PreloaderComp} from '../../../components/Preloader';
 
 function Users() {
 
@@ -23,7 +22,7 @@ function RenderContent(){
     const {token} = useContext(AuthContext);
     const [error, setError] = useState(false);
     const [alert, setAlert] = useState(false);
-
+console.log(token)
     const fetchLinks = useCallback(async ()=>{
 
         try{
@@ -74,12 +73,12 @@ function RenderContent(){
 
 
     if(loading){
-        return(<Preloader />)
+        return(<PreloaderComp />)
     }
 
     if(!loading){
         if(!users.length){
-            return(<p className="text-center mt-5">Список Пуст</p>)
+            return(<p className="text-center mt-5">This list is empty!</p>)
         }
     }
 
@@ -95,7 +94,7 @@ function RenderContent(){
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <h3 className="text-center">Список Зарегистрированных пользователей</h3>
+        <h3 className="text-center">List of Registered Users</h3>
         <table className="mt-5">
             <thead>
                 <tr>
