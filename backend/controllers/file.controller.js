@@ -63,3 +63,24 @@ exports.fileUpload = async (req, res) => {
     })
 
 }
+
+exports.getFiles = async(req,res)=>{
+    await checkAuth(req,res);
+
+    if(!req.user){
+        return res.status(401).json({message: 'You are not logged in'});
+    }
+
+    await File.findAll({
+        where: {publish:true},
+        include:[{
+            model: Product
+        }]
+    })
+        .then(result=>{
+            res.status(200).json({success: true, data: result})
+        })
+        .catch(err=>{
+            res.status(400).json({success: false, message: err.message})
+        })
+}

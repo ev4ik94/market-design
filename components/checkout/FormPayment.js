@@ -1,4 +1,5 @@
 import {useState} from "react";
+import classes from '../../styles/components/formPayment.module.css'
 
 export function FormPayment(){
 
@@ -13,7 +14,7 @@ export function FormPayment(){
     return(
         <div style={{marginTop:'150px'}}>
             <h3 className="font-weight-bold">Contact information</h3>
-            <div className="forms-block d-flex justify-content-between mt-5 flex-wrap">
+            <div className={`${classes['forms-block']} d-flex justify-content-between mt-5 flex-wrap`}>
                 <form className="col-5 col-lg-5 col-sm-5 col-12">
                     <div className="form-group">
                         <label htmlFor="inputNamePayment" value={name} onChange={(e)=>{setName(e.target.value)}}>first name *</label>
@@ -52,46 +53,8 @@ export function FormPayment(){
 
                 </form>
             </div>
-            <button className="checkout-btn text-uppercase float-right">continue checkout</button>
+            <button className={`${classes['checkout-btn']} text-uppercase float-right`}>continue checkout</button>
 
-            <style jsx>
-                {
-                    `
-                                              
-                        .checkout-btn{
-                            border:none;
-                            outline:none;
-                            background-color:#7cb342;
-                            color:#fff;
-                            transition:all .4s ease;
-                            padding: 15px 20px;
-                            margin-right: 15px;
-                        }
-                        
-                        .checkout-btn:hover{
-                            background-color:#95d64c;
-                        }
-                        
-                        
-                        
-                        
-                        @media screen and (max-width: 450px){
-                            .totalCost > p, h3{
-                                font-size:1.5rem;
-                            }
-                            
-                         
-                        }
-                        
-                         @media screen and (max-width: 350px){
-                            .totalCost > p{
-                                font-size:1.2rem;
-                            }
-                        }
-                  
-                  `
-                }
-            </style>
         </div>
     )
 }

@@ -1,0 +1,14 @@
+
+
+@media screen and (max-width: 500px) {
+    .also-like-title{
+        font-size: 1.8rem;
+    }
+}
+
+
+@media screen and (max-width: 400px) {
+    .also-like-title{
+        font-size: 1.6rem;
+    }
+}

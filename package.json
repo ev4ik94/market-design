@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "next  build",
-    "start": "next  start"
+    "start": "next  start",
+    "prod": "next export"
   },
   "dependencies": {
     "@fancyapps/fancybox": "^3.5.7",

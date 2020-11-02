@@ -1,0 +1,36 @@
+.user-head-nav > li{
+    border:1px solid #f2ede8;
+    border-left:none;
+    border-top:none;
+    padding:20px;
+}
+
+.active-link > a{
+    font-weight:bold;
+}
+
+.user-head-nav  li > a{
+    color:#000;
+    text-decoration:none;
+    letter-spacing:.1rem;
+}
+
+.user-head-nav li > a:hover{
+    font-weight:bold;
+
+}
+
+.user-head-nav > li > a:before{
+    content:attr(title);
+    font-weight:bold;
+    height:0;
+    overflow:hidden;
+    display:block;
+}
+
+@media screen and (max-width: 500px) {
+    .user-head-nav  li > a{
+        font-size: .8rem;
+    }
+
+}

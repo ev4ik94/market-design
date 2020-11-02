@@ -18,6 +18,10 @@ import {FormPayment} from '../components/checkout/FormPayment';
 import {getCookie, decrypt, createCookie, encrypt} from "../components/secondary-functions";
 
 
+/*----Styles-----*/
+import classes from '../styles/views/checkout.module.css'
+
+
 
 
 
@@ -51,10 +55,13 @@ function Checkout({cart,getCart}) {
     }, [mount, token]);
 
     useEffect(()=>{
-        if(cart.cart.length){
-            setProduct(cart.cart);
-            totalCostF(cart.cart)
+        if(cart && cart.cart){
+            if(cart.cart!==null && cart.cart.length){
+                setProduct(cart.cart);
+                totalCostF(cart.cart)
+            }
         }
+
     }, [cart])
 
     const totalCostF = (obj)=>{
@@ -106,9 +113,9 @@ function Checkout({cart,getCart}) {
 
     return (
         <MainLayout title={'Title'}>
-            <div className="container">
-                <h2 className="font-weight-bold text-center text-uppercase pb-3">checkout</h2>
-                <div className="bread-crumbs d-flex mt-3">
+            <div className={`container ${classes['wrap-checkout-content']}`}>
+                <h2 className={`font-weight-bold text-center text-uppercase pb-3 ${classes['h2-checkout']}`}>checkout</h2>
+                <div className={`${classes['bread-crumbs']} d-flex mt-3`}>
                     <p className="text-uppercase">you are here: </p>&nbsp;
                     <Link href="/home"><a className="text-uppercase" title="home">home</a></Link>&nbsp;
                     /&nbsp;
@@ -116,7 +123,7 @@ function Checkout({cart,getCart}) {
                 </div>
                 {
                     products.length?(<>
-                        <div className="products-list mt-3">
+                        <div className={`${classes['products-list']} mt-3`}>
                             {
                                 products.map((item, index)=>{
                                     let costType = item.Product.costs.filter(cost=>cost.type===item.type_cost);
@@ -126,15 +133,15 @@ function Checkout({cart,getCart}) {
 
 
                                     return(
-                                        <div className="product-item d-flex flex-lg-row flex-sm-row flex-column mb-5" key={index}>
+                                        <div className={`${classes['product-item']} d-flex flex-lg-row flex-sm-row flex-column mb-5`} key={index}>
                                             <Link href="/shop-products/[id]" as={`/shop-products/${item.Product.id}`}>
                                                 <a className="col-lg-3 col-6 col-sm-5 pl-0">
-                                                    <div className="img-product h-100">
+                                                    <div className={`${classes['img-product']} h-100`}>
                                                         <img src={item.Product && item.Product.Images?(item.Product.Images.main?item.Product.Images.small:item.Product.Images[0].small):process.env.DEFAULT_IMAGE} alt={item.title?item.title:''} className="img-cover"/>
                                                     </div>
                                                 </a>
                                             </Link>
-                                            <div className="info-product col-lg-6 col-12 col-sm-5 pt-lg-5 pt-sm-5 pt-3">
+                                            <div className={`${classes['info-product']} col-lg-6 col-12 col-sm-5 pt-lg-5 pt-sm-5 pt-3`}>
                                                 <Link href="/shop-products/[id]" as={`/shop-products/${item.Product.id}`}>
                                                     <a>
                                                         <h2 className="font-weight">{item.Product && item.Product.title?item.Product.title:''}</h2>
@@ -152,131 +159,16 @@ function Checkout({cart,getCart}) {
                             }
                         </div>
 
-                        <div className="d-flex justify-content-between totalCost col-6 float-right">
+                        <div className={`d-flex justify-content-between ${classes['totalCost']} col-6 float-right`}>
                             <p className="font-weight-bold">Total</p>
-                            <p  className="font-weight-bold">{totalCost} <span style={{fontSize:'1.5rem'}}>USD</span></p>
+                            <p  className="font-weight-bold">{totalCost} <span>USD</span></p>
                         </div>
                         <FormPayment />
                     </>):(<div style={{minHeight:"400px"}}><p className="text-center" style={{fontSize:'2rem'}}>Cart is empty!</p></div>)
                 }
 
             </div>
-            <style jsx>
-                {
-                    `
-                        h2{
-                            border-bottom:1px solid #f2ede8;
-                        }
-                        
-                        .product-item h2{
-                            border:none;
-                            color:#000;
-                        }
-                        
-                        .product-item > div:last-child p{
-                            font-size:1.8rem;
-                        }
-                        
-                        .bread-crumbs a{
-                            text-decoration:none;
-                            color:#263238;
-                            letter-spacing:.05em;
-                        }
-                        
-                        .bread-crumbs a:hover{
-                            font-weight:bold;
-                        }
-                        
-                        .bread-crumbs a:before{
-                            content:attr(title);
-                            font-weight:bold;
-                            height:0;
-                            overflow:hidden;
-                            display:block;
-                        }
-                        
-                       
-                         .bread-crumbs p{letter-spacing:.05em;}
-                         
-                         .product-item{ 
-                            border:1px solid #e8e8e8;
-                            cursor:pointer;
-                         }
-                         
-                        .info-product p{font-size:1.2rem;}
-                        
-                        .product-item > div:last-child button{
-                            border:none;
-                            background-color:transparent;
-                            outline:none;
-                            font-size:1.2rem;
-                            opacity:0;
-                            transition:all .5s ease;
-                        }
-                        
-                        .product-item > div:last-child button:hover{
-                            text-decoration:underline;
-                        }
-                        
-                        .product-item:hover > div:last-child button{
-                            opacity:1;
-                        }
-                        
-                        .totalCost p{
-                            font-size:2rem;
-                        }
-                        
-                          .img-product:hover img{
-                            opacity:.5;
-                        }
-                        
-                        a{
-                            text-decoration:none!important;
-                        }
-                        
-                        .checkout-btn{
-                            border:none;
-                            outline:none;
-                            background-color:#7cb342;
-                            color:#fff;
-                            transition:all .4s ease;
-                        }
-                        
-                        .checkout-btn:hover{
-                            background-color:#95d64c;
-                        }
-                        
-                        @media screen and (max-width: 991px) {
-                            .product-item > div:last-child button{
-                                opacity:1;
-                            }
-                        }
-                        
-                        @media screen and (max-width: 770px) {
-                            h2{font-size:1.6rem;}
-                            
-                            .info-product > p,
-                            .product-item > div:last-child > button
-                            {font-size:1rem;}
-                            
-                            .product-item > div:last-child > p{
-                                font-size:1.4rem;
-                            }
-                            
-                            .product-item > div:last-child > button,
-                            .product-item > div:last-child > p
-                            {padding-left:15px;}
-                        }
-                        
-                        
-                       
-                        
-                       
-                        
-                  
-                  `
-                }
-            </style>
+
         </MainLayout>
     )
 }

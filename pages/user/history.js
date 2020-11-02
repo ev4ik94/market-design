@@ -7,6 +7,8 @@ import {useAuth} from "../../hooks/auth.hook";
 import NavUsers from '../../components/user/navUser';
 import {Preloader} from "../../components/Preloader";
 
+import classes from '../../styles/views/history.module.css'
+
 
 export default function History({history:serverUser, serverErr}) {
 
@@ -72,7 +74,7 @@ export default function History({history:serverUser, serverErr}) {
                     <>
                         <NavUsers />
                         <div className="container">
-                            <div className="title-head">
+                            <div className={`${classes['title-head']}`}>
                                 <h1 className="font-weight-bold text-center text-uppercase">{email && email!==null?email:''}</h1>
                             </div>
                             {
@@ -81,10 +83,10 @@ export default function History({history:serverUser, serverErr}) {
                                 </div>):''
                             }
 
-                            <div className="block-address-info mt-5">
+                            <div className={`${classes['block-address-info']} mt-5`}>
                                 {
                                     products.length?(<>
-                                        <div className="products-list mt-3">
+                                        <div className={`${classes['products-list']} mt-3`}>
                                             {
                                                 products.map((item, index)=>{
                                                     let costType = item.Product.costs.filter(cost=>cost.type===item.type_cost);
@@ -93,16 +95,16 @@ export default function History({history:serverUser, serverErr}) {
                                                     cost = cost.length?cost[0].cost:'';
 
                                                     return(
-                                                        <div className="product-item d-flex mb-5" key={index}>
+                                                        <div className={`${classes['product-item']} d-flex flex-lg-row flex-sm-row flex-column mb-5`} key={index}>
                                                             <Link href="/shop-products/[id]" as={`/shop-products/${item.Product.id}`}>
-                                                                <a className="col-3 pl-0">
+                                                                <a className="col-lg-3 col-6 col-sm-5 pl-0">
                                                                     <div className="img-product">
                                                                         <img src={item.Product && item.Product.Images?(item.Product.Images.main?item.Product.Images.small:item.Product.Images[0].small):process.env.DEFAULT_IMAGE} alt={item.title?item.title:''} />
                                                                     </div>
                                                                 </a>
 
                                                             </Link>
-                                                            <div className="info-product col-6 pt-5">
+                                                            <div className={`${classes['info-product']} col-lg-6 col-12 col-sm-5 pt-lg-5 pt-sm-5 pt-3`}>
                                                                 <Link href="/shop-products/[id]" as={`/shop-products/${item.Product.id}`}>
                                                                     <a>
                                                                         <h2 className="font-weight">{item.Product && item.Product.title?item.Product.title:''}</h2>
@@ -110,7 +112,7 @@ export default function History({history:serverUser, serverErr}) {
                                                                 </Link>
                                                                 <p className="font-weight-bold">For {costType} use</p>
                                                             </div>
-                                                            <div className="mt-5">
+                                                            <div className="mt-lg-5 mt-md-5 mt-sm-5 mt-1">
                                                                 <p className="mb-0">{cost} USD</p>
                                                             </div>
                                                         </div>
@@ -127,71 +129,13 @@ export default function History({history:serverUser, serverErr}) {
                         </div>
                     </>
                 ):(<div style={{minHeight:'400px'}}>
-                    <div className="title-head col-6 mx-auto">
+                    <div className={`${classes['title-head']} col-6 mx-auto`}>
                         <h1 className="font-weight-bold text-center mb-0 mt-5">ACCESS DENIED</h1>
                     </div>
                     <p className="text-center mt-3">You are not authorized to access this page.</p>
                 </div>)
             }
 
-            <style jsx>
-                {
-                    `
-                      .title-head{
-                        padding:10px;
-                        border-bottom:1px solid #f2ede8;
-                      }
-                      
-                      .product-item h2{
-                            border:none;
-                            color:#000;
-                        }
-                        
-                        .product-item > div:last-child p{
-                            font-size:1.8rem;
-                        }
-                        
-                                                
-                         .product-item{ 
-                            border:1px solid #e8e8e8;
-                            cursor:pointer;
-                         }
-                         
-                        .info-product p{font-size:1.2rem;}
-                        
-                        .product-item > div:last-child button{
-                            border:none;
-                            background-color:transparent;
-                            outline:none;
-                            font-size:1.2rem;
-                            opacity:0;
-                            transition:all .5s ease;
-                        }
-                        
-                        .product-item > div:last-child button:hover{
-                            text-decoration:underline;
-                        }
-                        
-                        .product-item:hover > div:last-child button{
-                            opacity:1;
-                        }
-                        
-                        .totalCost p{
-                            font-size:2rem;
-                        }
-                        
-                        .img-product:hover img{
-                            opacity:.5;
-                        }
-                        
-                        a{
-                            text-decoration:none!important;
-                        }
-                                      
-                  
-                  `
-                }
-            </style>
         </MainLayout>
     )
 }

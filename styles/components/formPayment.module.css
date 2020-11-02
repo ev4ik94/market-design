@@ -1,0 +1,14 @@
+.checkout-btn{
+    border:none;
+    outline:none;
+    background-color:#7cb342;
+    color:#fff;
+    transition:all .4s ease;
+    padding: 15px 20px;
+    margin-right: 15px;
+}
+
+.checkout-btn:hover{
+    background-color:#95d64c;
+}
+

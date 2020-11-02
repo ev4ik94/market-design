@@ -87,9 +87,6 @@ async function applyExtraSetup(sequelize) {
     await File.sync();
 
 
-
-
-
 }
 
 module.exports = { applyExtraSetup };

@@ -1,0 +1,137 @@
+.h2-checkout{
+    border-bottom:1px solid #f2ede8;
+}
+
+.product-item h2{
+    border:none;
+    color:#000;
+}
+
+.product-item > div:last-child p{
+    font-size:1.8rem;
+}
+
+.bread-crumbs a{
+    text-decoration:none;
+    color:#263238;
+    letter-spacing:.05em;
+}
+
+.bread-crumbs a:hover{
+    font-weight:bold;
+}
+
+.bread-crumbs a:before{
+    content:attr(title);
+    font-weight:bold;
+    height:0;
+    overflow:hidden;
+    display:block;
+}
+
+
+.bread-crumbs p{letter-spacing:.05em;}
+
+.product-item{
+    border:1px solid #e8e8e8;
+    cursor:pointer;
+}
+
+.info-product p{font-size:1.2rem;}
+
+.product-item > div:last-child button{
+    border:none;
+    background-color:transparent;
+    outline:none;
+    font-size:1.2rem;
+    opacity:0;
+    transition:all .5s ease;
+}
+
+.product-item > div:last-child button:hover{
+    text-decoration:underline;
+}
+
+.product-item:hover > div:last-child button{
+    opacity:1;
+}
+
+.totalCost p{
+    font-size:2rem;
+}
+
+.totalCost p > span{
+    font-size: 1.5rem;
+}
+
+.img-product:hover img{
+    opacity:.5;
+}
+
+.wrap-checkout-content a{
+    text-decoration:none!important;
+}
+
+.checkout-btn{
+    border:none;
+    outline:none;
+    background-color:#7cb342;
+    color:#fff;
+    transition:all .4s ease;
+}
+
+.checkout-btn:hover{
+    background-color:#95d64c;
+}
+
+@media screen and (max-width: 991px) {
+    .product-item > div:last-child button{
+        opacity:1;
+    }
+}
+
+@media screen and (max-width: 770px) {
+
+    .h2-checkout{font-size:1.6rem;}
+
+    .info-product > p,
+    .product-item > div:last-child > button
+    {font-size:1rem;}
+
+    .product-item > div:last-child > p{
+        font-size:1.4rem;
+    }
+
+    .product-item > div:last-child > button,
+    .product-item > div:last-child > p
+    {padding-left:15px;}
+}
+
+
+@media screen and (max-width: 500px) {
+
+    .totalCost p{
+        font-size: 1.5rem;
+    }
+
+    .info-product h2{
+        font-size: 1.6rem;
+    }
+
+
+    .totalCost p > span{
+        font-size: 1.3rem;
+    }
+}
+
+@media screen and (max-width: 400px) {
+
+    .totalCost{
+        float: left!important;
+        padding-left: 0!important;
+    }
+
+    .totalCost p{
+        font-size: 1.3rem;
+    }
+}

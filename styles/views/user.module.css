@@ -1,0 +1,98 @@
+.title-head{
+    padding:10px;
+    border-bottom:1px solid #f2ede8;
+}
+
+.change-pass-btn{
+    background-color:transparent;
+    border:none;
+    outline:none!important;
+    letter-spacing:.05rem;
+    text-decoration:underline;
+}
+
+.change-pass-btn:hover{
+    text-decoration:none;
+}
+
+.form-change-pass{
+    height:0;
+    overflow:hidden;
+    transition:all .4s ease;
+}
+
+.btn{
+    background-color:transparent;
+    border:1px solid #000;
+    transition:all .4s ease;
+    border-radius:0;
+    padding:15px 40px;
+    color:#000;
+    float:right;
+}
+
+.btn:hover{
+    background-color:#000;
+    color:#fff;
+}
+
+.block-address-info button{
+    color:#fff;
+    background-color:#f98e3c;
+    border:none;
+    outline:none;
+    padding: 15px 50px;
+    font-size: 1.2rem;
+    align-self:flex-end;
+}
+
+.address-users-inf{
+    border:1px solid #e8e8e8;
+    flex-direction:column;
+}
+
+.address-users-inf > div{
+    padding:10px;
+}
+
+.address-users-inf > div p:first-child{
+    font-size:1.4rem;
+}
+
+.address-users-inf > div p:last-child{
+    font-size:1.2rem;
+}
+
+
+@media screen and (max-width: 600px) {
+
+    .title-head h1{
+        font-size: 1.8rem;
+    }
+}
+
+@media screen and (max-width: 450px) {
+
+    .change-pass-btn{
+        font-size: .9rem;
+    }
+    .btn{
+        padding:10px 30px;
+    }
+
+    .address-users-inf > div p:first-child{
+        font-size:1.2rem;
+    }
+
+    .address-users-inf > div p:last-child, .block-address-info button{
+        font-size:1rem;
+    }
+
+}
+
+@media screen and (max-width: 600px) {
+
+    .title-head h1{
+        font-size: 1.6rem;
+    }
+}

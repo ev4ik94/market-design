@@ -2,17 +2,16 @@ import {useState, useEffect, useRef} from 'react'
 import MainLayout from '../../components/MainLayout';
 import useHttp from '../../hooks/http.hook';
 import {decrypt} from "../../components/secondary-functions";
-import { useRouter } from 'next/router';
 import {useAuth} from "../../hooks/auth.hook";
 import NavUsers from '../../components/user/navUser';
 import {Preloader} from "../../components/Preloader";
+import classes from '../../styles/views/user.module.css'
 
 
 
 
 export default function User({users:serverUser, serverError}) {
 
-    //const router = useRouter()
     const {request, loading, error} = useHttp();
     const [mount, setMount] = useState(true);
     const {token, userId, email} = useAuth();
@@ -120,15 +119,15 @@ export default function User({users:serverUser, serverError}) {
                     <>
                         <NavUsers />
                         <div className="container">
-                            <div className="title-head">
+                            <div className={`${classes['title-head']}`}>
                                 <h1 className="font-weight-bold text-center text-uppercase">{email && email!==null?email:''}</h1>
                             </div>
                             {
-                                errorC!==''?(<div className="error-message mb-3">
+                                errorC!==''?(<div className='error-message mb-3'>
                                     <p className="text-center mb-0">{errorC}</p>
                                 </div>):''
                             }
-                            <div className="form-user-content mt-5 col-6">
+                            <div className={`${classes['form-user-content']} mt-5 col-lg-6 col-md-6 col-12`}>
                                 <form>
                                     <div className="form-group">
                                         <label htmlFor="nameUserContent">name</label>
@@ -155,14 +154,14 @@ export default function User({users:serverUser, serverError}) {
                                     </div>
 
                                 </form>
-                                <button className="text-uppercase float-right change-pass-btn" onClick={()=>toggleChangePass(!toggleForm)}>change password</button>
-                                <div className="form-change-pass mt-5">
+                                <button className={`text-uppercase float-right ${classes['change-pass-btn']}`} onClick={()=>toggleChangePass(!toggleForm)}>change password</button>
+                                <div className={`${classes['form-change-pass']} form-change-pass mt-5`}>
 
                                     <form ref={changeForm}>
                                         <div className="form-group">
                                             <label htmlFor="newPass">new password</label>
                                             <input type="password"
-                                                   className={`form-control ${errorC!==''?'isError':''}`}
+                                                   className={`form-control ${errorC!==''?`isError`:''}`}
                                                    id="newPass"
                                                    aria-describedby="emailHelp"
                                                    value={password}
@@ -172,7 +171,7 @@ export default function User({users:serverUser, serverError}) {
                                         <div className="form-group">
                                             <label htmlFor="confirmPass">confirm new password</label>
                                             <input type="password"
-                                                   className={`form-control ${errorC!==''?'isError':''}`}
+                                                   className={`form-control ${errorC!==''?`isError`:''}`}
                                                    id="confirmPass"
                                                    value={passwordConfirm}
                                                    onChange={(e)=>setPasswordConfirm(e.target.value)}
@@ -181,64 +180,18 @@ export default function User({users:serverUser, serverError}) {
 
                                     </form>
                                 </div>
-                                <button className="btn text-uppercase" onClick={updateUser}>save</button>
+                                <button className={`${classes['btn']} text-uppercase`} onClick={updateUser}>save</button>
                             </div>
                         </div>
                     </>
                 ):(<div style={{minHeight:'400px'}}>
-                    <div className="title-head col-6 mx-auto">
+                    <div className={`${classes['title-head']} col-6 mx-auto`}>
                         <h1 className="font-weight-bold text-center mb-0 mt-5">ACCESS DENIED</h1>
                     </div>
                     <p className="text-center mt-3">You are not authorized to access this page.</p>
                 </div>)
             }
 
-            <style jsx>
-                {
-                    `
-                      .title-head{
-                        padding:10px;
-                        border-bottom:1px solid #f2ede8;
-                      }
-                      
-                      .change-pass-btn{
-                        background-color:transparent;
-                        border:none;
-                        outline:none;
-                        letter-spacing:.05rem;
-                        text-decoration:underline;
-                      }
-                      
-                      .change-pass-btn:hover{
-                        text-decoration:none;
-                      }
-                      
-                      .form-change-pass{
-                        height:0;
-                        overflow:hidden;
-                        transition:all .4s ease;
-                      }
-                      
-                      .btn{
-                        background-color:transparent;
-                        border:1px solid #000;
-                        transition:all .4s ease;
-                        border-radius:0;
-                        padding:15px 40px;
-                        color:#000;
-                        float:right;
-                      }
-                      
-                      .btn:hover{
-                        background-color:#000;
-                        color:#fff;
-                      }
-                      
-                                      
-                  
-                  `
-                }
-            </style>
         </MainLayout>
     )
 }

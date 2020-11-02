@@ -69,7 +69,7 @@ exports.loginUser = async function(req, res, role=0){
 
         }).then(async(user)=>{
             if(user===null){ // если такого пользователя нет в базе
-                return res.status(404).json({message: 'User is not found'});
+                return res.status(400).json({message: 'User is not found'});
             }
 
             const isMatch = await bcrypt.compare(password, user.dataValues.password);

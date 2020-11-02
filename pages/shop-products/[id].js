@@ -19,6 +19,8 @@ import SecondBar from '../../components/SecondBar';
 import Slider from "react-slick";
 import MainLayout from '../../components/MainLayout';
 
+import classes from '../../styles/components/alsoLike.module.css'
+
 
 
 
@@ -861,7 +863,6 @@ function AlsoLike({id,catid}){
 
     const [products, setProducts] = useState([]);
     const {request} = useHttp();
-    //const [mount, setMount] = useState(true);
 
 
     const getProducts = async()=>{
@@ -884,7 +885,7 @@ function AlsoLike({id,catid}){
 
     return(
         <div className="mt-5">
-            <h2 className="text-uppercase text-center mb-3 font-weight-bold">you can also like</h2>
+            <h2 className={`${classes['also-like-title']} text-uppercase text-center mb-3 font-weight-bold`}>you can also like</h2>
             {products.length?(<ProductShop products={products}/>):''}
             <Link href="/shop">
                 <a className="text-uppercase d-block mx-auto text-center">back to shop</a>

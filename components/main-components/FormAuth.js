@@ -89,6 +89,12 @@ export function FormAuth({formToggle, toggleFn}){
 
     }
 
+    const resetForm = ()=>{
+        setError(false)
+        setEmail('')
+        setPassword('')
+    }
+
     return(
         <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
             <div className="modal-dialog modal-dialog-centered">
@@ -96,7 +102,7 @@ export function FormAuth({formToggle, toggleFn}){
                     {
                         formToggle==='signIn'?(<><div className="modal-header position-relative">
                             <h4 className="modal-title font-weight-bold mx-auto" id="exampleModalLabel">Sign In</h4>
-                            <button type="button" className="close position-absolute" data-dismiss="modal" aria-label="Close">
+                            <button type="button" className="close position-absolute" data-dismiss="modal" aria-label="Close" onClick={resetForm}>
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -107,13 +113,23 @@ export function FormAuth({formToggle, toggleFn}){
                                 <form className="col-9 mx-auto">
                                     <div className="form-group">
                                         <label htmlFor="exampleInputEmail1">EMAIL *</label>
-                                        <input type="email" className={`${error?'form-control isError':'form-control'}`} id="exampleInputEmail1"
-                                               aria-describedby="emailHelp" onChange={(e)=>setEmail(e.target.value)}/>
+                                        <input
+                                            type="email"
+                                            className={`${error?'form-control isError':'form-control'}`}
+                                            id="exampleInputEmail1"
+                                            aria-describedby="emailHelp"
+                                            value={email}
+                                            onChange={(e)=>setEmail(e.target.value)}/>
 
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="exampleInputPassword1">PASSWORD *</label>
-                                        <input type="password" className={`${error?'form-control isError':'form-control'}`} id="exampleInputPassword1" onChange={(e)=>setPassword(e.target.value)}/>
+                                        <input
+                                            type="password"
+                                            className={`${error?'form-control isError':'form-control'}`}
+                                            id="exampleInputPassword1"
+                                            value={password}
+                                            onChange={(e)=>setPassword(e.target.value)}/>
                                     </div>
                                     <button type="submit" className="btn mx-auto d-block" onClick={signIn}>sign in</button>
                                 </form>
