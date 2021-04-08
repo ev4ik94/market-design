@@ -3,7 +3,7 @@ const { Sequelize } = require('sequelize-next');
 const { applyExtraSetup } = require('./extra-setup');
 
 const sequelize = new Sequelize(
-    'ev4ik94',
+    'postgres',
     'postgres',
     '41f733EvA',{
     host: '35.198.170.71',
