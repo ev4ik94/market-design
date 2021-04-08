@@ -3,10 +3,10 @@ const { Sequelize } = require('sequelize-next');
 const { applyExtraSetup } = require('./extra-setup');
 
 const sequelize = new Sequelize(
-    env.database,
-    env.username,
-    env.password,{
-    host: env.host,
+    'ev4ik94',
+    'postgres',
+    '41f733EvA',{
+    host: '35.198.170.71',
     dialect: env.dialect,
     operatorsAliases: false,
 
