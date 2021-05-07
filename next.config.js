@@ -1,6 +1,6 @@
 module.exports = {
     env: {
-        API_URL: 'https://market-design.vercel.app/',
+        API_URL: 'https://market-design.vercel.app',
         USER: process.env.USER,
         PASSWORD: process.env.PASSWORD,
         HOST: process.env.HOST,
