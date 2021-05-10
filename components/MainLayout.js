@@ -58,7 +58,7 @@ function MainLayout({children, title, cart, getCart}) {
 
         try{
             setLoading(true);
-            await fetch(`https://pellpic.herokuapp.com/api/category`, {
+            await fetch(`https://ec2-54-155-87-214.eu-west-1.compute.amazonaws.com/api/category`, {
                 method: 'GET',
                 headers: {'Content-Type': 'application/json'},
                 body:null
