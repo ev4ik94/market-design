@@ -58,7 +58,7 @@ function MainLayout({children, title, cart, getCart}) {
 
         try{
             setLoading(true);
-            await fetch(`${process.env.API_URL}/api/category`, {
+            await fetch(`https://pellpic.herokuapp.com/api/category`, {
                 method: 'GET',
                 headers: {'Content-Type': 'application/json'},
                 body:null
