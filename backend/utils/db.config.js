@@ -2,7 +2,23 @@ const env = require('./env');
 const { Sequelize } = require('sequelize-next');
 const { applyExtraSetup } = require('./extra-setup');
 
-const sequelize = new Sequelize('dbname=d3etrfpgcpibii host=ec2-54-155-87-214.eu-west-1.compute.amazonaws.com port=5432 user=tzjypqqsumcnec password=fad01b8c019ef3568542560776ad581a4a44693bfb0b6af70ba6ca02573e1977 sslmode=require');
+const sequelize = new Sequelize(
+    'd3etrfpgcpibii', //database name
+    'tzjypqqsumcnec', //user-name
+    'fad01b8c019ef3568542560776ad581a4a44693bfb0b6af70ba6ca02573e1977', //password
+
+    {
+    host: 'ec2-54-155-87-214.eu-west-1.compute.amazonaws.com',
+    dialect: 'postgres',
+    port: 5432,
+    ssl: true,
+        dialectOptions: {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false // <<<<<< YOU NEED THIS
+            }
+        }
+});
 
 
 const db = {};
