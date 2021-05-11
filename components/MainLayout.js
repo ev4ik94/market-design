@@ -74,11 +74,11 @@ function MainLayout({children, title, cart, getCart}) {
                     createCookie('categories', encrypt(result.data))
                     setCategories(result.data);
                     setLoading(false);
-                }).catch(err=>console.log(err.message))
+                }).catch(err=>console.log(err))
 
 
         }catch(e){
-
+            console.log(e)
             throw e;
         }
     }
