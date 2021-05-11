@@ -2,21 +2,7 @@ const env = require('./env');
 const { Sequelize } = require('sequelize-next');
 const { applyExtraSetup } = require('./extra-setup');
 
-const sequelize = new Sequelize(
-    env.database,
-    env.username,
-    env.password,{
-    host: env.host,
-    dialect: env.dialect,
-    operatorsAliases: false,
-
-    pool: {
-        max: env.max,
-        min: env.pool.min,
-        acquire: env.pool.acquire,
-        idle: env.pool.idle
-    }
-});
+const sequelize = new Sequelize('postgres://tzjypqqsumcnec:fad01b8c019ef3568542560776ad581a4a44693bfb0b6af70ba6ca02573e1977@ec2-54-155-87-214.eu-west-1.compute.amazonaws.com:5432/d3etrfpgcpibii');
 
 
 const db = {};
